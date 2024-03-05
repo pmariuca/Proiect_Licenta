@@ -13,6 +13,14 @@ module.exports = {
         'tablet': {'max': '640px',},
         'mobile': {'max': '380px',},
       },
+      colors: {
+        'primary': '#0F6CBF',
+        'text-primary': '#000000',
+        'text-secondary': '#FFFFFF',
+        'light-grey': '#F7F7F7',
+        'light-green': '#CFEFCF',
+        'light-red': '#F4D6D2',
+      }
     },
   },
   plugins: [],
