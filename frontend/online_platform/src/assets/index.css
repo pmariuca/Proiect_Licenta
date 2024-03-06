@@ -23,8 +23,12 @@
     @apply w-full h-full;
   }
 
+  .content-container {
+    @apply max-w-[90rem] w-full mx-auto px-24;
+  }
+
   .login-container {
-    @apply flex flex-col max-w-[50%] mx-auto mt-14 mb-5 border-[0.063rem] border-solid border-[#00000020] m-tablet:max-w-[66.666667%];
+    @apply flex flex-col max-w-[66.666667%] mx-auto mt-14 mb-5 border-[0.063rem] border-solid border-[#00000020] tablet:max-w-[50%];
   }
 
   .main-text {
@@ -37,5 +41,9 @@
 
   .login-btn {
     @apply text-text-secondary bg-primary w-full py-1.5 px-3 leading-normal font-normal text-[0.938rem];
+  }
+
+  .footer-link {
+    @apply text-[0.938rem] underline decoration-1;
   }
 }
