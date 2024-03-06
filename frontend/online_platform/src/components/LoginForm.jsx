@@ -8,11 +8,11 @@ function LoginForm(params) {
             <form>
                 <div>
                     <input type={'text'} placeholder={'Username'}
-                           className={'input-bar'}/>
+                           className={'input-bar focus:outline-none'}/>
                 </div>
                 <div className={'mt-4'}>
                     <input type={'password'} placeholder={'Password'}
-                           className={'input-bar'}/>
+                           className={'input-bar focus:outline-none'}/>
                 </div>
 
                 <div className={'mt-4'}>
