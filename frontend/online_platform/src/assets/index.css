@@ -46,4 +46,12 @@
   .footer-link {
     @apply text-[0.938rem] underline decoration-1;
   }
+
+  .alert-container {
+    @apply bg-light-red text-[#691911] mx-5 mt-9 py-3 px-5 font-normal text-[0.938rem];
+  }
+
+  .navbar {
+    @apply max-h-[3.125rem] w-full fixed top-0 right-0 bg-pink-300;
+  }
 }
