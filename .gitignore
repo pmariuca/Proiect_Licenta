@@ -1,7 +1,9 @@
 .idea
-backend-js/.env
+poze
 
 backend-js/node_modules
 backend-js/.idea
+backend-js/licenta-de643-firebase-adminsdk-mcjcm-15715bb87c.json
+backend-js/.env
 
 backend-py/.idea

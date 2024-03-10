@@ -1,10 +1,17 @@
 import LogoSVG from '../components/SVG/LogoSVG.jsx';
 import LoginForm from '../components/LoginForm';
-import {LOGIN_PAGE} from "../utils/content";
-import QuestionSVG from "../components/SVG/QuestionSVG";
-import Footer from "../components/Footer";
+import {LOGIN_PAGE} from '../utils/content';
+import QuestionSVG from '../components/SVG/QuestionSVG';
+import Footer from '../components/Footer';
+import {useState} from "react";
 
 function Login() {
+    const [loginError, setLoginError] = useState(null);
+
+    function handleLoginFormError(error) {
+        setLoginError(error.message);
+    }
+
     return (
         <div className={'h-screen flex flex-col justify-between page-container'}>
             <div className={'login-container'}>
@@ -12,8 +19,13 @@ function Login() {
                     <LogoSVG classes={'mx-auto my-0'}/>
                 </div>
 
+                {loginError &&
+                    <div className={'alert-container'}>
+                        {loginError}
+                    </div>
+                }
                 <div className={'p-5 flex flex-wrap justify-center'}>
-                    <LoginForm classes={'px-4 w-5/12 mt-4'}/>
+                    <LoginForm classes={'px-4 w-5/12 mt-4'} onError={handleLoginFormError}/>
                     <div className={'px-4 w-5/12 my-4'}>
                         <a href={LOGIN_PAGE.CREDENTIALS_LINK}
                            className={'main-text'}>

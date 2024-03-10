@@ -2,10 +2,10 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     loggedIn: false,
-    checkTokenLoading: true,
     token: null,
     name: null,
-    surname: null
+    surname: null,
+    remember: false,
 };
 
 export const globalSlice = createSlice({
@@ -15,9 +15,6 @@ export const globalSlice = createSlice({
         setLoggedIn: (state, action) => {
             state.loggedIn = action.payload;
         },
-        setCheckTokenLoading: (state, action) => {
-            state.checkTokenLoading = action.payload;
-        },
         setToken: (state, action) => {
             state.token = action.payload;
         },
@@ -26,9 +23,9 @@ export const globalSlice = createSlice({
         },
         setSurname: (state, action) => {
             state.surname = action.payload;
-        }
+        },
+        setRemember: (state, action) => {
+            state.remember = action.payload;
+        },
     }
 });
-export const { setLoggedIn, setCheckTokenLoading, setToken, setName, setSurname } = globalSlice.actions;
-
-export default globalSlice.reducer;

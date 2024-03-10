@@ -3,7 +3,8 @@ export const LOGIN_PAGE = {
     LOGIN_BUTTON: 'Log in',
     FORGOT_CREDENTIALS: 'Forgotten your username or password?',
     CREDENTIALS_LINK: 'https://www.net.ase.ro/student/',
-    COOKIES: 'Cookies must be enabled in your browser.'
+    COOKIES: 'Cookies must be enabled in your browser.',
+    EMPTY_FIELDS: 'Invalid login, please try again.',
 };
 
 export const FOOTER = {
