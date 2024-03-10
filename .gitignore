@@ -1,4 +1,5 @@
 .idea
+backend-js/.env
 
 backend-js/node_modules
 backend-js/.idea
