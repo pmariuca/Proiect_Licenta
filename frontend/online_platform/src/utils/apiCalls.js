@@ -1,5 +1,3 @@
-import {Navigate} from "react-router-dom";
-
 export async function logUser(userData) {
     try {
         const { username, password } = userData;

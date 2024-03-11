@@ -2,9 +2,9 @@ import { LOGIN_PAGE } from '../utils/content';
 import { logUser } from '../utils/apiCalls';
 import {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
-import {globalSlice, setLoggedIn, setName, setSurname, setToken} from '../store/slices/globalSlice';
+import {globalSlice} from '../store/slices/globalSlice';
 import Cookies from 'js-cookie';
-import {Navigate} from "react-router-dom";
+import {Navigate} from 'react-router-dom';
 
 function LoginForm(params) {
     const { classes, onError } = params;

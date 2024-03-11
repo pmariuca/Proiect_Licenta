@@ -52,6 +52,32 @@
   }
 
   .navbar {
-    @apply max-h-[3.125rem] w-full fixed top-0 right-0 bg-pink-300;
+    @apply max-h-[3.125rem] w-full h-full fixed top-0 right-0 flex items-center justify-between flex-nowrap py-2 px-4;
   }
+
+  .profile-dropdown {
+    @apply hidden absolute right-auto min-w-[10rem] border-[0.063rem] border-solid border-[#00000026] py-2 bg-white mt-1;
+  }
+}
+
+.navbar-language:hover {
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.76);
+}
+
+.navbar-language:after,
+.profile-container:after {
+  display: inline-block;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+  content: "";
+  border-top: 0.3rem solid;
+  border-right: 0.3rem solid transparent;
+  border-bottom: 0;
+  border-left: 0.3rem solid transparent;
+}
+
+.profile-dropdown > button:hover {
+  background-color: #0F6CBF;
+  color: #fff;
 }

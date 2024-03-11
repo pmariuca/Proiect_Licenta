@@ -23,6 +23,9 @@ module.exports = {
         'footer': '#343A40'
       }
     },
+    boxShadow: {
+      'nav': '0 2px 4px rgba(0,0,0,.08)'
+    }
   },
   plugins: [],
 }
