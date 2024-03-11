@@ -23,3 +23,9 @@ export const FOOTER = {
         RO: 'Obțineți aplicația mobilă'
     },
 };
+
+export const NAVBAR = {
+    TITLE: 'BL@ASE',
+    LANGUAGE: 'Română (ro)',
+    LOGOUT: 'Delogare',
+};
