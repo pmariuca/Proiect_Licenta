@@ -52,11 +52,34 @@
   }
 
   .navbar {
-    @apply max-h-[3.125rem] w-full h-full fixed top-0 right-0 flex items-center justify-between flex-nowrap py-2 px-4;
+    @apply max-h-[3.125rem] w-full h-full sticky top-0 right-0 flex items-center justify-between flex-nowrap py-2 px-4;
   }
 
   .profile-dropdown {
     @apply hidden absolute right-auto min-w-[10rem] border-[0.063rem] border-solid border-[#00000026] py-2 bg-white mt-1;
+  }
+
+  #menu-drawer {
+    @apply fixed p-5 bg-[#F2F2F2] overflow-y-auto w-[17.813rem] right-auto top-[3.125rem];
+  }
+
+  .menu-drawer-item {
+    @apply py-3 px-5 bg-white border-t-[0.05rem] border-r-[0.05rem] border-l-[0.05rem] border-solid border-[#00000026] text-[#495057] text-[0.938rem];
+  }
+
+  .menu-drawer-item:last-of-type {
+    @apply border-b-[0.05rem] border-solid border-[#00000026];
+  }
+
+  .menu-drawer-item.home {
+    background-color: #0F6CBF;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .menu-drawer-item.home > button {
+    display: flex;
+    align-items: baseline;
   }
 }
 
@@ -80,4 +103,14 @@
 .profile-dropdown > button:hover {
   background-color: #0F6CBF;
   color: #fff;
+}
+
+#menu-drawer {
+  left: -19.063rem;
+  height: calc(100% - 3.125rem);
+  transition: right 0.5s ease, left 0.5s ease;
+}
+
+#menu-drawer.open {
+  left: 0;
 }

@@ -3,9 +3,9 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     loggedIn: false,
     token: null,
+    username: null,
     name: null,
-    surname: null,
-    remember: false,
+    surname: null
 };
 
 export const globalSlice = createSlice({
@@ -18,14 +18,14 @@ export const globalSlice = createSlice({
         setToken: (state, action) => {
             state.token = action.payload;
         },
+        setUsername: (state, action) => {
+            state.username = action.payload;
+        },
         setName: (state, action) => {
             state.name = action.payload;
         },
         setSurname: (state, action) => {
             state.surname = action.payload;
-        },
-        setRemember: (state, action) => {
-            state.remember = action.payload;
-        },
+        }
     }
 });

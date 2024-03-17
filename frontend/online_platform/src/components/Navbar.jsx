@@ -9,7 +9,7 @@ import {globalSlice} from "../store/slices/globalSlice";
 import {Navigate} from "react-router-dom";
 
 function Navbar(params) {
-    const {userName} = params;
+    const {userName, handleDrawer} = params;
     const [ isProfileDropdownOpen, setIsProfileDropdownOpen ] = useState(false);
 
     const dispatch = useDispatch();
@@ -21,6 +21,7 @@ function Navbar(params) {
     const handleLogout = () => {
         dispatch(globalSlice.actions.setLoggedIn(false));
         dispatch(globalSlice.actions.setToken(null));
+        dispatch(globalSlice.actions.setUsername(null));
         dispatch(globalSlice.actions.setName(null));
         dispatch(globalSlice.actions.setSurname(null));
 
@@ -41,7 +42,9 @@ function Navbar(params) {
         <nav className={'navbar shadow-nav'}>
             <div className={'flex items-center'}>
                 <div className={'inline-block mr-4'}>
-                    <button className={'bg-[#e9ecef] mr-1 py-2 px-4'}>
+                    <button className={'bg-[#e9ecef] mr-1 py-2 px-4'}
+                            onClick={handleDrawer}
+                    >
                         <MenuSVG color={'#000000'} classes={'m-0'}/>
                     </button>
                 </div>
