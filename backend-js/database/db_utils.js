@@ -1,5 +1,5 @@
 const admin = require('firebase-admin');
-const { client } = require('../config');
+const {client} = require('../config');
 const serviceAccount = require('../licenta-de643-firebase-adminsdk-mcjcm-15715bb87c.json');
 const bcrypt = require('bcrypt');
 
@@ -66,18 +66,18 @@ async function insertPhoto(path) {
     }
 }
 
-const pass = generatePassword('bFS9gdWa6n6M');
+const pass = generatePassword('JKCwjxATKxrj');
 const student = {
-    username: 'miciialaalessandro22@stud.ase.ro',
-    name: 'Mîcîială',
-    surname: 'Alessandro',
-    contact_email: 'alexmiciiala@yahoo.com',
+    username: 'popescusimona21@stud.ase.ro',
+    name: 'Popescu',
+    surname: 'Simona Gabriela',
+    contact_email: 'popescu_simona@yahoo.com',
     password: pass.hash,
     salt: pass.salt,
-    id_group: 1095,
+    id_group: 1094,
     id_university: 1,
     id_year: 3,
-    image_path: 'D:\\Learning\\Proiect_Licenta\\poze\\miciialaalessandro22@stud.ase.ro.jpeg'
+    image_path: 'D:\\Learning\\Proiect_Licenta\\poze\\popescusimona21@stud.ase.ro.jpeg'
 };
 
 insertStudent(student);

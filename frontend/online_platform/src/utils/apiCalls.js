@@ -20,3 +20,16 @@ export async function logUser(userData) {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function getCourses(username) {
+    try {
+        const url = new URL('http://localhost:3001/courses/getCourses');
+        url.searchParams.append('username', username);
+        const response = await fetch(url);
+
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}

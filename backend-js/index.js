@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { client } = require('./config');
 const authRoutes = require('./server/authRoutes');
+const coursesRoutes = require('./server/coursesRoutes');
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,7 @@ app.use(cors({
 client.connect();
 
 app.use('/auth', authRoutes);
+app.use('/courses', coursesRoutes);
 
 app.listen(3001, () => {
     console.log('Server is running on port 3001');

@@ -28,4 +28,12 @@ export const NAVBAR = {
     TITLE: 'BL@ASE',
     LANGUAGE: 'Română (ro)',
     LOGOUT: 'Delogare',
+    MENU_DRAWER: {
+        HOME: 'Acasă',
+        BOARD: 'Tablou de bord',
+        CALENDAR: 'Calendar',
+        PRIVATE_FILES: 'Fișiere private',
+        COURSES: 'Cursurile mele',
+        MORE: 'Mai multe...'
+    }
 };

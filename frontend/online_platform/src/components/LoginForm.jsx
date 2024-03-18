@@ -51,6 +51,7 @@ function LoginForm(params) {
                 if(status === 200) {
                     dispatch(globalSlice.actions.setLoggedIn(true));
                     dispatch(globalSlice.actions.setToken(token));
+                    dispatch(globalSlice.actions.setUsername(username));
                     dispatch(globalSlice.actions.setName(name));
                     dispatch(globalSlice.actions.setSurname(surname));
 
