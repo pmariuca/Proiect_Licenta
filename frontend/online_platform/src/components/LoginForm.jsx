@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import {globalSlice} from '../store/slices/globalSlice';
 import Cookies from 'js-cookie';
 import {Navigate} from 'react-router-dom';
+import {populateGlobalSlice} from "../utils/functions";
 
 function LoginForm(params) {
     const { classes, onError } = params;
@@ -49,11 +50,14 @@ function LoginForm(params) {
                 }
 
                 if(status === 200) {
-                    dispatch(globalSlice.actions.setLoggedIn(true));
-                    dispatch(globalSlice.actions.setToken(token));
-                    dispatch(globalSlice.actions.setUsername(username));
-                    dispatch(globalSlice.actions.setName(name));
-                    dispatch(globalSlice.actions.setSurname(surname));
+                    const userData = {
+                        username,
+                        name,
+                        surname,
+                        token,
+                        dispatch
+                    };
+                    populateGlobalSlice(userData, dispatch);
 
                     if (remember) {
                         Cookies.set('username', username);

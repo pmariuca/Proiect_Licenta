@@ -9,7 +9,7 @@ import {globalSlice} from "../store/slices/globalSlice";
 import {Navigate} from "react-router-dom";
 
 function Navbar(params) {
-    const {userName, handleDrawer} = params;
+    const {userName, handleDrawer, handleLogoutToken} = params;
     const [ isProfileDropdownOpen, setIsProfileDropdownOpen ] = useState(false);
 
     const dispatch = useDispatch();
@@ -80,7 +80,10 @@ function Navbar(params) {
                     </button>
                     <div className={'profile-dropdown'}>
                         <button className={'flex items-center text-[0.938rem] px-6 w-full'}
-                                onClick={handleLogout}
+                                onClick={() => {
+                                    handleLogoutToken();
+                                    handleLogout();
+                                }}
                         >
                             <LogoutSVG classes={'mr-2'}/>
                             {NAVBAR.LOGOUT}

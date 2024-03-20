@@ -71,16 +71,20 @@
     @apply border-b-[0.05rem] border-solid border-[#00000026];
   }
 
-  .menu-drawer-item.home {
-    background-color: #0F6CBF;
-    color: #fff;
-    font-weight: bold;
+  .homepage-container {
+    @apply p-5;
   }
+}
 
-  .menu-drawer-item.home > button {
-    display: flex;
-    align-items: baseline;
-  }
+.menu-drawer-item.home {
+  background-color: #0F6CBF;
+  color: #fff;
+  font-weight: bold;
+}
+
+.menu-drawer-item.home > button {
+  display: flex;
+  align-items: baseline;
 }
 
 .navbar-language:hover {
@@ -113,4 +117,20 @@
 
 #menu-drawer.open {
   left: 0;
+}
+
+.homepage-container {
+  transition: margin-left 0.5s ease, margin-right 0.5s ease
+}
+
+#menu-drawer.open + .homepage-container {
+  margin-left: 17.813rem;
+}
+
+.courses-container {
+  display: inline-block;
+  padding: 1.25rem;
+  background: #FFFFFF;
+  width: calc(100% - 21.563rem);
+  border: 1px solid #00000020;
 }
