@@ -13,7 +13,9 @@ function MenuDrawer(params) {
     return (
         <div id={'menu-drawer'}>
             <ul>
-                <li className={`menu-drawer-item ${route === '/' ? 'home' : ''}`}>
+                <li className={`menu-drawer-item ${route === '/' ? 'home' : ''}`}
+                    key={'home'}
+                >
                     <button
                         onClick={() => {
                             return <Navigate to={'/'} />
@@ -23,19 +25,27 @@ function MenuDrawer(params) {
                         {NAVBAR.MENU_DRAWER.HOME}
                     </button>
                 </li>
-                <li className={'menu-drawer-item flex items-center'}>
+                <li className={'menu-drawer-item flex items-center'}
+                    key={'dashboard'}
+                >
                     <TachometerSVG classes={'mr-2'}/>
                     {NAVBAR.MENU_DRAWER.BOARD}
                 </li>
-                <li className={'menu-drawer-item flex items-baseline'}>
+                <li className={'menu-drawer-item flex items-baseline'}
+                    key={'calendar'}
+                >
                     <CalendarSVG classes={'mr-2'}/>
                     {NAVBAR.MENU_DRAWER.CALENDAR}
                 </li>
-                <li className={'menu-drawer-item flex items-baseline'}>
+                <li className={'menu-drawer-item flex items-baseline'}
+                    key={'files'}
+                >
                     <FileSVG classes={'mr-2'}/>
                     {NAVBAR.MENU_DRAWER.PRIVATE_FILES}
                 </li>
-                <li className={'menu-drawer-item flex items-center'}>
+                <li className={'menu-drawer-item flex items-center'}
+                    key={'courses'}
+                >
                     <CourseSVG classes={'mr-2'}/>
                     {NAVBAR.MENU_DRAWER.COURSES}
                 </li>
@@ -45,14 +55,14 @@ function MenuDrawer(params) {
                         return (
                             <>
                                 <li className={'menu-drawer-item'}
-                                    key={`course-${value.course.id_course}`}>
+                                    key={`course-${key}`}>
                                     <a href={'/'} className={'flex items-center'}>
                                         <CourseSVG classes={'mr-2'}/>
                                         {`${name}-C Sem${value.semester}`}
                                     </a>
                                 </li>
                                 <li className={'menu-drawer-item'}
-                                    key={`seminar-${value.seminar.id_seminar}`}>
+                                    key={`seminar-${key}`}>
                                     <a href={'/'} className={'flex items-center'}>
                                         <CourseSVG classes={'mr-2'}/>
                                         {`${name}-S Sem${value.semester}`}

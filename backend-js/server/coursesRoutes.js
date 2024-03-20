@@ -40,9 +40,14 @@ router.get('/getCourses', async (req, res) => {
                         const resultProfessorSeminar = await client.query(queryProfessor, [resultSeminare.rows[0].username]);
                         resultSeminare.rows[0].professor = resultProfessorSeminar.rows[0].name + ' ' + resultProfessorSeminar.rows[0].surname;
 
+                        const queryUniversity = 'SELECT * FROM university WHERE id_university = $1';
+                        const resultUniversity = await client.query(queryUniversity, [row.id_university]);
+
                         finalResult[row.id_subject] = {
                             name: row.name_subject,
                             year: row.id_year,
+                            university: resultUniversity.rows[0].main_university,
+                            specialization: resultUniversity.rows[0].name,
                             semester: row.id_semester,
                             course: resultCourses.rows[0],
                             seminar: resultSeminare.rows[0]

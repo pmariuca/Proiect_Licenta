@@ -5,7 +5,8 @@ const initialState = {
     token: null,
     username: null,
     name: null,
-    surname: null
+    surname: null,
+    role: null
 };
 
 export const globalSlice = createSlice({
@@ -26,6 +27,9 @@ export const globalSlice = createSlice({
         },
         setSurname: (state, action) => {
             state.surname = action.payload;
+        },
+        setRole: (state, action) => {
+            state.role = action.payload;
         }
     }
 });
