@@ -4,7 +4,7 @@ import HomeSVG from "./SVG/HomeSVG";
 import TachometerSVG from "./SVG/TachometerSVG";
 import FileSVG from "./SVG/FileSVG";
 import CalendarSVG from "./SVG/CalendarSVG";
-import CourseSVG from "./CourseSVG";
+import CourseSVG from "./SVG/CourseSVG";
 
 function MenuDrawer(params) {
     const { courses } = params;

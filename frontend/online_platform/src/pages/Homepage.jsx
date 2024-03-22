@@ -4,7 +4,8 @@ import Navbar from '../components/Navbar';
 import MenuDrawer from "../components/MenuDrawer";
 import {useEffect, useState} from "react";
 import {getCourses} from "../utils/apiCalls";
-import {PLATFORM_DETAILS} from "../utils/content";
+import {NAVBAR, PLATFORM_DETAILS} from "../utils/content";
+import CourseContainer from "../components/CourseContainer";
 
 function Homepage(params) {
     const { logoutFunction } = params;
@@ -41,8 +42,6 @@ function Homepage(params) {
         setDrawerOpen(!drawerOpen);
     }
 
-    console.log(courses)
-
     return (
         <div className={'page-container'}>
             <Navbar userName={userName} handleDrawer={handleDrawer} handleLogoutToken={logoutFunction}/>
@@ -50,8 +49,16 @@ function Homepage(params) {
             <div className={'homepage-container'}>
                 <div className={'flex gap-5 laptop:flex-col'}>
                     <div className={'courses-container laptop:w-full'}>
-
+                        <h2 className={'mb-[0.563rem] text-[1.688rem] font-light'}>{NAVBAR.MENU_DRAWER.COURSES}</h2>
+                        {
+                            Object.entries(courses).map(([key, value]) => {
+                                return (
+                                    <CourseContainer course={value} />
+                                )
+                            })
+                        }
                     </div>
+
                     <div className={'w-[22.5rem] float-right p-5 border-[0.063rem] border-solid border-[#00000020] laptop:w-full'}>
                         <span className={'text-[1.172rem] font-light break-words'}>{PLATFORM_DETAILS.TITLE}</span>
                         <div className={'mt-8'}>
