@@ -74,6 +74,10 @@
   .homepage-container {
     @apply p-5;
   }
+
+  .course-border {
+    @apply border-[0.063rem] border-solid border-[#00000020];
+  }
 }
 
 .menu-drawer-item.home {

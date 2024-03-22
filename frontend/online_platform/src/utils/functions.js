@@ -1,3 +1,5 @@
+import { startOfWeek, endOfWeek, eachWeekOfInterval, format } from 'date-fns';
+import { ro } from 'date-fns/locale';
 import {globalSlice} from "../store/slices/globalSlice";
 
 export function populateGlobalSlice(userData, dispatch) {
@@ -17,4 +19,23 @@ export function populateGlobalSlice(userData, dispatch) {
     dispatch(globalSlice.actions.setName(name));
     dispatch(globalSlice.actions.setSurname(surname));
     dispatch(globalSlice.actions.setRole(role));
+}
+
+export function getWeeks() {
+    const semesterStart = new Date(2024, 1, 19);
+    const semesterEnd = new Date(2024, 7, 7);
+
+    const weeks = eachWeekOfInterval({
+        start: semesterStart,
+        end: semesterEnd
+    }, {
+        weekStartsOn: 1
+    });
+
+    const formattedWeeks = weeks.map(week => ({
+        start: format(startOfWeek(week, { weekStartsOn: 1 }), 'dd MMMM', { locale: ro }),
+        end: format(endOfWeek(week, { weekStartsOn: 1 }), 'dd MMMM', { locale: ro })
+    }));
+
+    return formattedWeeks;
 }

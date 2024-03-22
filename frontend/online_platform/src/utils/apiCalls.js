@@ -62,3 +62,16 @@ export async function getCourses(username) {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function getSpecificCourse(id) {
+    try {
+        const url = new URL('http://localhost:3001/courses/getSpecificCourse');
+        url.searchParams.append('id', id);
+        const response = await fetch(url);
+
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}

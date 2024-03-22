@@ -9,9 +9,14 @@ function Footer() {
     return (
         <div className={'bg-footer'}>
             <div className={'content-container flex flex-col py-4 text-light-grey'}>
-                <span className={'text-[0.938rem]'}>
-                    {loggedIn ? (name + ' ' + surname) : FOOTER.NOT_LOGGED_IN}
-                </span>
+                {loggedIn ? (
+                    <span className="text-[0.938rem]">
+                        {'Sunteți conectat în calitate de ' + name.toUpperCase() + ' ' + surname + ' '}
+                        <span className={'underline decoration-1'}>(Delogare)</span>
+                    </span>
+                ) : (
+                    FOOTER.NOT_LOGGED_IN
+                )}
                 <a href={'/'} className={'footer-link'}>
                     {loggedIn ? FOOTER.HOME.RO : FOOTER.HOME.ENG}
                 </a>

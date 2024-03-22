@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import {getCourses} from "../utils/apiCalls";
 import {NAVBAR, PLATFORM_DETAILS} from "../utils/content";
 import CourseContainer from "../components/CourseContainer";
+import Footer from "../components/Footer";
 
 function Homepage(params) {
     const { logoutFunction } = params;
@@ -110,6 +111,7 @@ function Homepage(params) {
                     </div>
                 </div>
             </div>
+            <Footer/>
         </div>
     )
 }

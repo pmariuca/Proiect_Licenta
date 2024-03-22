@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import {retrieveUserData, verifyToken} from "./utils/apiCalls";
 import {useDispatch} from "react-redux";
 import {populateGlobalSlice} from "./utils/functions";
+import CoursePage from "./pages/CoursePage";
 
 
 function App() {
@@ -59,6 +60,7 @@ function App() {
             <Routes>
                 <Route path='/' element={<Homepage logoutFunction={handleLogoutToken}/>} />
                 <Route path='/login' element={loggedIn ? <Navigate to={'/'}/> : <Login/>} />
+                <Route path='/course/:id' element={<CoursePage logoutFunction={handleLogoutToken} />}/>
             </Routes>
         </Router>
     );

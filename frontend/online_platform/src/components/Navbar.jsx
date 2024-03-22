@@ -27,7 +27,7 @@ function Navbar(params) {
 
         localStorage.removeItem('token');
 
-        return <Navigate to={'/login'}/>
+        window.location.href = '/login';
     };
 
     useEffect(() => {
