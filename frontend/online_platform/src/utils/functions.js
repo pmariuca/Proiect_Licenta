@@ -39,3 +39,18 @@ export function getWeeks() {
 
     return formattedWeeks;
 }
+
+export function formatDate(dateString) {
+    console.log(dateString)
+    const days = ["duminică", "luni", "marți", "miercuri", "joi", "vineri", "sâmbătă"];
+    const months = ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"];
+
+    let date = new Date(dateString);
+    date.setFullYear(2024);
+
+    const dayOfWeek = days[date.getDay()];
+    const dayOfMonth = date.getDate();
+    const month = months[date.getMonth()];
+
+    return `${dayOfWeek}, ${dayOfMonth} ${month} ${date.getFullYear()}`;
+}
