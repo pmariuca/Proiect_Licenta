@@ -3,7 +3,7 @@ import KeySVG from "./SVG/KeySVG";
 
 function CourseContainer(params) {
     const { course } = params;
-    console.log(course)
+
     return (
         <>
             <div className={'p-2'}>
@@ -12,7 +12,8 @@ function CourseContainer(params) {
                         <div className={'m-auto'}>
                             <CourseHomepageSVG/>
                         </div>
-                        <a className={'ml-2 text-primary text-[1.563rem] font-light hover:underline'}>
+                        <a href={`/course/c${course.course.id_course}`}
+                            className={'ml-2 text-primary text-[1.563rem] font-light hover:underline'}>
                             {`${course.name}, Tip-C, Sem-${course.semester}, Zi (2023-2024)`}
                         </a>
                     </div>
@@ -37,7 +38,8 @@ function CourseContainer(params) {
                         <div className={'m-auto'}>
                             <CourseHomepageSVG/>
                         </div>
-                        <a className={'ml-2 text-primary text-[1.563rem] font-light hover:underline'}>
+                        <a href={`/course/s${course.seminar.id_seminar}`}
+                            className={'ml-2 text-primary text-[1.563rem] font-light hover:underline'}>
                             {`${course.name}, Tip-S, Sem-${course.semester}, Zi (2023-2024)`}
                         </a>
                     </div>

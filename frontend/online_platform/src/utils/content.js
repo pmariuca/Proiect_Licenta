@@ -71,3 +71,9 @@ export const PLATFORM_DETAILS = {
         }
     }
 };
+
+export const COURSE_PAGE = {
+    HOME: 'Acasă',
+    DISCIPLINE: 'Fișa disciplinei',
+    ANNOUNCEMENTS: 'Anunțuri',
+};

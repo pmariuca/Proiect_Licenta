@@ -55,7 +55,11 @@ router.get('/checkToken', async (req, res) => {
             return res.status(401).json({success: false, data: 'Token is invalid'});
         }
     } catch (error) {
-        console.log('There has been an error processing the request: ', error);
+        if (error instanceof jwt.TokenExpiredError) {
+            localStorage.removeItem('token');
+        } else {
+            console.log('There has been an error processing the request: ', error);
+        }
     }
 });
 

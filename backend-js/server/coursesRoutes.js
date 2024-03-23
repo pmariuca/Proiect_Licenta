@@ -64,4 +64,38 @@ router.get('/getCourses', async (req, res) => {
     }
 });
 
+router.get('/getSpecificCourse', async (req, res) => {
+    try {
+        const {id} = req.query;
+        const type = id.slice(0, 1);
+        const idCourse = id.slice(1);
+
+        let result;
+        if (type === 'c') {
+            const query = 'SELECT * FROM course WHERE id_course = $1';
+            result = await client.query(query, [idCourse]);
+        } else if(type === 's') {
+            const query = 'SELECT * FROM seminar WHERE id_seminar = $1';
+            result = await client.query(query, [idCourse]);
+        }
+
+        if(!result.rows) {
+            return res.status(404).json({success: false, data: 'There has been an error processing the request'});
+        }
+
+        const {id_subject} = result.rows[0];
+        const querySubject = 'SELECT * FROM subject WHERE id_subject = $1';
+        const resultSubject = await client.query(querySubject, [id_subject]);
+
+        const completeCourse = {
+            subject: resultSubject.rows[0],
+            course: result.rows[0]
+        };
+
+        return res.status(200).json({success: true, data: completeCourse});
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
 module.exports = router;
