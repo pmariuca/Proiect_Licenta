@@ -1,4 +1,5 @@
-const {Client} = require('pg');
+const { Client } = require('pg');
+const { MongoClient } = require('mongodb');
 
 require('dotenv').config({
     path: './.env'
@@ -12,6 +13,8 @@ const client = new Client({
     port: process.env.PGPORT,
 });
 
+const clientMongo = new MongoClient(process.env.MONGODB_CONNECTION_STRING);
+
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -23,5 +26,6 @@ const firebaseConfig = {
 
 module.exports = {
     client,
+    clientMongo,
     firebaseConfig
 };

@@ -7,6 +7,30 @@ function checkRole(username) {
     }
 }
 
+function convertDate(date) {
+    const months = {
+        "ianuarie": "01",
+        "februarie": "02",
+        "martie": "03",
+        "aprilie": "04",
+        "mai": "05",
+        "iunie": "06",
+        "iulie": "07",
+        "august": "08",
+        "septembrie": "09",
+        "octombrie": "10",
+        "noiembrie": "11",
+        "decembrie": "12"
+    };
+
+    const parts = date.trim().split(' ');
+    const day = parts[0].padStart(2, '0');
+    const month = months[parts[1].toLowerCase()];
+
+    return `2024-${month}-${day}`;
+}
+
 module.exports = {
-    checkRole
+    checkRole,
+    convertDate
 }

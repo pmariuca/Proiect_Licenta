@@ -1,6 +1,5 @@
 const express = require('express');
 const { client } = require('../config');
-const {raw} = require("express");
 
 const router = express.Router();
 

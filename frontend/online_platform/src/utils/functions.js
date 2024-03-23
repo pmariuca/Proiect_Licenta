@@ -23,7 +23,7 @@ export function populateGlobalSlice(userData, dispatch) {
 
 export function getWeeks() {
     const semesterStart = new Date(2024, 1, 19);
-    const semesterEnd = new Date(2024, 7, 7);
+    const semesterEnd = new Date(2024, 6, 7);
 
     const weeks = eachWeekOfInterval({
         start: semesterStart,
@@ -33,8 +33,8 @@ export function getWeeks() {
     });
 
     const formattedWeeks = weeks.map(week => ({
-        start: format(startOfWeek(week, { weekStartsOn: 1 }), 'dd MMMM', { locale: ro }),
-        end: format(endOfWeek(week, { weekStartsOn: 1 }), 'dd MMMM', { locale: ro })
+        start: format(startOfWeek(week, { weekStartsOn: 1 }), 'd MMMM', { locale: ro }),
+        end: format(endOfWeek(week, { weekStartsOn: 1 }), 'd MMMM', { locale: ro })
     }));
 
     return formattedWeeks;

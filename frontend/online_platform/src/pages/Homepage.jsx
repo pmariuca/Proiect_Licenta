@@ -23,7 +23,7 @@ function Homepage(params) {
     useEffect(() => {
         (async () => {
             const response = await getCourses(username);
-            setCourses(response.responseJSON.data);
+            setCourses(response?.responseJSON?.data);
         })();
     }, []);
 

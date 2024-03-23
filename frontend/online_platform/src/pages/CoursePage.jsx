@@ -7,6 +7,9 @@ import MenuDrawer from "../components/MenuDrawer";
 import Footer from "../components/Footer";
 import {COURSE_PAGE, NAVBAR} from "../utils/content";
 import {getWeeks} from "../utils/functions";
+import PdfSVG from "../components/SVG/PdfSVG";
+import ChatSVG from "../components/SVG/ChatSVG";
+import WeekContainer from "../components/WeekContainer";
 
 function CoursePage(params) {
     const { logoutFunction } = params;
@@ -31,8 +34,6 @@ function CoursePage(params) {
 
         setWeeks(getWeeks());
     }, []);
-
-    console.log(weeks)
 
     function handleDrawer() {
         setDrawerOpen(!drawerOpen);
@@ -66,8 +67,24 @@ function CoursePage(params) {
                         </span>
                     </div>
                 </div>
-                <div className={'course-border'}>
-
+                <div className={'course-border p-5'}>
+                    <ul className={'m-4'}>
+                        <li className={'mt-4 pl-4 pb-8 week-container'}>
+                            <div className={'activity-container'}>
+                                <PdfSVG/>
+                                <span className={'week-text'}>{COURSE_PAGE.DISCIPLINE}</span>
+                            </div>
+                            <div className={'week-activity-spaced activity-container'}>
+                                <ChatSVG />
+                                <span className={'week-text'}>{COURSE_PAGE.ANNOUNCEMENTS}</span>
+                            </div>
+                        </li>
+                        {weeks?.map((week, index) => {
+                            return (
+                                <WeekContainer index={index} week={week} course={idCourse.slice(1)} type={idCourse[0].toUpperCase()} />
+                            )
+                        })}
+                    </ul>
                 </div>
             </div>
             <Footer/>

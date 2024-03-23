@@ -21,12 +21,12 @@ function App() {
         if(token) {
             setIsLoading(true);
             verifyToken(token).then(response => {
-                if(response.status === 200) {
+                if(response?.status === 200) {
                     setLoggedIn(true);
 
                 retrieveUserData(token).then(response => {
-                    if(response.status === 200) {
-                        const {username, name, surname} = response.responseJSON.data;
+                    if(response?.status === 200) {
+                        const {username, name, surname} = response?.responseJSON?.data;
 
                         const userData = {
                             username,
