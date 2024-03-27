@@ -50,9 +50,22 @@ export async function retrieveUserData(token) {
     }
 }
 
-export async function getCourses(username) {
+export async function getCoursesStudents(username) {
     try {
-        const url = new URL('http://localhost:3001/courses/getCourses');
+        const url = new URL('http://localhost:3001/courses/getCoursesStudents');
+        url.searchParams.append('username', username);
+        const response = await fetch(url);
+
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getCoursesProfessors(username) {
+    try {
+        const url = new URL('http://localhost:3001/courses/getCoursesProfessors');
         url.searchParams.append('username', username);
         const response = await fetch(url);
 

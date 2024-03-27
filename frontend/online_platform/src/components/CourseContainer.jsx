@@ -12,7 +12,7 @@ function CourseContainer(params) {
                         <div className={'m-auto'}>
                             <CourseHomepageSVG/>
                         </div>
-                        <a href={`/course/c${course.course.id_course}`}
+                        <a href={`/course/c${course?.course?.id_course}`}
                             className={'ml-2 text-primary text-[1.563rem] font-light hover:underline'}>
                             {`${course.name}, Tip-C, Sem-${course.semester}, Zi (2023-2024)`}
                         </a>
@@ -24,7 +24,7 @@ function CourseContainer(params) {
                     <div className={'font-normal text-[#1D2125] text-[0.875rem]'}>
                         Formator:
                         <span className={'text-primary cursor-pointer ml-2 hover:underline hover:decoration-1'}>
-                            {course.course.professor}
+                            {course.professor}
                         </span>
                     </div>
                     <div className={'w-[55%] font-normal text-[#1D2125] text-[0.875rem]'}>
@@ -38,7 +38,7 @@ function CourseContainer(params) {
                         <div className={'m-auto'}>
                             <CourseHomepageSVG/>
                         </div>
-                        <a href={`/course/s${course.seminar.id_seminar}`}
+                        <a href={`/course/s${course?.seminar?.id_seminar}`}
                             className={'ml-2 text-primary text-[1.563rem] font-light hover:underline'}>
                             {`${course.name}, Tip-S, Sem-${course.semester}, Zi (2023-2024)`}
                         </a>
@@ -50,7 +50,7 @@ function CourseContainer(params) {
                     <div className={'font-normal text-[#1D2125] text-[0.875rem]'}>
                         Formator:
                         <span className={'text-primary cursor-pointer ml-2 hover:underline hover:decoration-1'}>
-                            {course.seminar.professor}
+                            {course.professor}
                         </span>
                     </div>
                     <div className={'w-[55%] font-normal text-[#1D2125] text-[0.875rem]'}>

@@ -1,4 +1,4 @@
-import { startOfWeek, endOfWeek, eachWeekOfInterval, format } from 'date-fns';
+import {startOfWeek, endOfWeek, eachWeekOfInterval, format, parse} from 'date-fns';
 import { ro } from 'date-fns/locale';
 import {globalSlice} from "../store/slices/globalSlice";
 
@@ -41,7 +41,6 @@ export function getWeeks() {
 }
 
 export function formatDate(dateString) {
-    console.log(dateString)
     const days = ["duminică", "luni", "marți", "miercuri", "joi", "vineri", "sâmbătă"];
     const months = ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"];
 
@@ -53,4 +52,14 @@ export function formatDate(dateString) {
     const month = months[date.getMonth()];
 
     return `${dayOfWeek}, ${dayOfMonth} ${month} ${date.getFullYear()}`;
+}
+
+export function parseDateFromString(dateString) {
+    const months = ["ianuarie", "februarie", "martie", "aprilie", "mai", "iunie", "iulie", "august", "septembrie", "octombrie", "noiembrie", "decembrie"];
+    const monthIndex = months.findIndex(month => dateString.includes(month));
+    const day = dateString.split(' ')[0];
+
+    const date = new Date(2024, monthIndex, day);
+
+    return date;
 }

@@ -56,7 +56,7 @@ router.get('/checkToken', async (req, res) => {
         }
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
-            localStorage.removeItem('token');
+            localStorage?.removeItem('token');
         } else {
             console.log('There has been an error processing the request: ', error);
         }

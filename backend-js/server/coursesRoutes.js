@@ -3,7 +3,7 @@ const { client } = require('../config');
 
 const router = express.Router();
 
-router.get('/getCourses', async (req, res) => {
+router.get('/getCoursesStudents', async (req, res) => {
     try {
         const {username} = req.query;
 
@@ -44,6 +44,65 @@ router.get('/getCourses', async (req, res) => {
                         const resultUniversity = await client.query(queryUniversity, [row.id_university]);
 
                         finalResult[row.id_subject] = {
+                            name: row.name_subject,
+                            year: row.id_year,
+                            university: resultUniversity.rows[0].main_university,
+                            specialization: resultUniversity.rows[0].name,
+                            semester: row.id_semester,
+                            course: resultCourses.rows[0],
+                            seminar: resultSeminare.rows[0]
+                        };
+
+                    }
+
+                    return res.status(200).json({success: true, data: finalResult});
+                }
+            }
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getCoursesProfessors', async (req, res) => {
+    try {
+        const {username} = req.query;
+
+        if (username) {
+            const query = 'SELECT id_university FROM professor WHERE username = $1';
+            const result = await client.query(query, [username]);
+
+            if(!result.rows) {
+                return res.status(404).json({success: false, data: 'There has been an error processing the request'});
+            }
+
+            if(result.rows.length > 0) {
+                const { id_university } = result.rows[0];
+
+                if(id_university) {
+                    const finalResult = {};
+                    const query = 'SELECT * FROM subject WHERE id_university = $1';
+                    const result = await client.query(query, [id_university]);
+
+                    if(!result.rows) {
+                        return res.status(404).json({success: false, data: 'There has been an error processing the request'});
+                    }
+
+                    for (const row of result.rows) {
+                        const queryCourses = 'SELECT * FROM course WHERE id_subject = $1 AND username = $2';
+                        const resultCourses = await client.query(queryCourses, [row.id_subject, username]);
+
+                        const queryProfessor = 'SELECT * FROM professor WHERE username = $1';
+                        const resultProfessor = await client.query(queryProfessor, [username]);
+
+                        const querySeminare = 'SELECT * FROM seminar WHERE id_subject = $1 AND username = $2';
+                        const resultSeminare = await client.query(querySeminare, [row.id_subject, username]);
+
+                        const queryUniversity = 'SELECT * FROM university WHERE id_university = $1';
+                        const resultUniversity = await client.query(queryUniversity, [id_university]);
+
+                        finalResult[row.id_subject] = {
+                            professor: resultProfessor.rows[0].name + ' ' + resultProfessor.rows[0].surname,
                             name: row.name_subject,
                             year: row.id_year,
                             university: resultUniversity.rows[0].main_university,

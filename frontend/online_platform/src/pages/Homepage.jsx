@@ -1,9 +1,9 @@
 import {useSelector} from 'react-redux';
-import {Navigate} from 'react-router-dom';
+import {Navigate, useNavigate} from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import MenuDrawer from "../components/MenuDrawer";
 import {useEffect, useState} from "react";
-import {getCourses} from "../utils/apiCalls";
+import {getCoursesProfessors, getCoursesStudents} from "../utils/apiCalls";
 import {NAVBAR, PLATFORM_DETAILS} from "../utils/content";
 import CourseContainer from "../components/CourseContainer";
 import Footer from "../components/Footer";
@@ -17,13 +17,22 @@ function Homepage(params) {
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);
     const surname = useSelector(state => state.global.surname);
+    const role = useSelector(state => state.global.role);
 
     const userName = name?.toUpperCase() + ' ' + surname;
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         (async () => {
-            const response = await getCourses(username);
-            setCourses(response?.responseJSON?.data);
+            if(role === 'student') {
+                const response = await getCoursesStudents(username);
+                setCourses(response?.responseJSON?.data);
+            } else if(role === 'professor') {
+                const response = await getCoursesProfessors(username);
+                setCourses(response?.responseJSON?.data);
+            }
+
         })();
     }, []);
 
@@ -36,7 +45,7 @@ function Homepage(params) {
     }, [drawerOpen]);
 
     if(!loggedIn) {
-        return <Navigate to={'/login'} />;
+        navigate('/login');
     }
 
     function handleDrawer() {

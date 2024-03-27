@@ -1,5 +1,5 @@
 import './assets/App.css';
-import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate} from 'react-router-dom';
 import Login from './pages/Login';
 import Homepage from "./pages/Homepage";
 import {useEffect, useState} from "react";
@@ -7,6 +7,7 @@ import {retrieveUserData, verifyToken} from "./utils/apiCalls";
 import {useDispatch} from "react-redux";
 import {populateGlobalSlice} from "./utils/functions";
 import CoursePage from "./pages/CoursePage";
+import AddActivityPage from "./pages/AddActivityPage";
 
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
                 <Route path='/' element={<Homepage logoutFunction={handleLogoutToken}/>} />
                 <Route path='/login' element={loggedIn ? <Navigate to={'/'}/> : <Login/>} />
                 <Route path='/course/:id' element={<CoursePage logoutFunction={handleLogoutToken} />}/>
+                <Route path='/add-activity' element={<AddActivityPage logoutFunction={handleLogoutToken}/>} />
             </Routes>
         </Router>
     );
