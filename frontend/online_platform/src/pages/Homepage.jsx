@@ -1,5 +1,4 @@
 import {useSelector} from 'react-redux';
-import {Navigate, useNavigate} from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import MenuDrawer from "../components/MenuDrawer";
 import {useEffect, useState} from "react";
@@ -20,8 +19,6 @@ function Homepage(params) {
     const role = useSelector(state => state.global.role);
 
     const userName = name?.toUpperCase() + ' ' + surname;
-
-    const navigate = useNavigate();
 
     useEffect(() => {
         (async () => {
@@ -45,7 +42,7 @@ function Homepage(params) {
     }, [drawerOpen]);
 
     if(!loggedIn) {
-        navigate('/login');
+        window.location.href ='/login';
     }
 
     function handleDrawer() {

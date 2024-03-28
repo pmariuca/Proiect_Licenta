@@ -100,12 +100,18 @@ export const ADD_ACTIVITY = {
     },
     ANSWERS: {
         TITLE: 'Tipuri de răspuns',
+        CHOICE: 'Alegere',
+        UPLOAD: 'Încărcare'
     },
     ACCESS: {
         TITLE: 'Restricționare acces',
+        FRC: 'Recunoaștere facială',
+        HUBSTAFF: 'Hubstaff'
     },
     QUESTIONS: {
         TITLE: 'Întrebări',
+        NUMBER_OF_QUESTIONS: 'Numărul de întrebări',
+        TIME_LIMIT: 'Limită de timp'
     },
     BUTTON: 'Adaugă'
 }
