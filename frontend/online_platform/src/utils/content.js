@@ -76,4 +76,42 @@ export const COURSE_PAGE = {
     HOME: 'Acasă',
     DISCIPLINE: 'Fișa disciplinei',
     ANNOUNCEMENTS: 'Anunțuri',
+    ADD_ACTIVITY: 'Adaugă activitate',
 };
+
+export const ADD_ACTIVITY = {
+    TITLE: 'Adaugăre activitate',
+    CHOOSE: {
+        INTERVAL: 'Alege intervalul',
+        LIMIT: 'Alege data limită'
+    },
+    GENERAL: {
+        TITLE: 'General',
+        NAME: 'Nume',
+        DESCRIPTION: 'Descriere'
+    },
+    DISPONIBILITY: {
+        TITLE: 'Disponibilitate',
+        START_DATE: 'Data de început',
+        END_DATE: 'Data de sfârșit',
+        LIMIT_DATE: 'Data limită',
+        START_TIME: 'Ora de început',
+        END_TIME: 'Ora de sfârșit',
+    },
+    ANSWERS: {
+        TITLE: 'Tipuri de răspuns',
+        CHOICE: 'Alegere',
+        UPLOAD: 'Încărcare'
+    },
+    ACCESS: {
+        TITLE: 'Restricționare acces',
+        FRC: 'Recunoaștere facială',
+        HUBSTAFF: 'Hubstaff'
+    },
+    QUESTIONS: {
+        TITLE: 'Întrebări',
+        NUMBER_OF_QUESTIONS: 'Numărul de întrebări',
+        TIME_LIMIT: 'Limită de timp'
+    },
+    BUTTON: 'Adaugă'
+}

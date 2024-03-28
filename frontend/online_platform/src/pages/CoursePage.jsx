@@ -1,9 +1,8 @@
-import {Navigate, useLocation} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getSpecificCourse} from "../utils/apiCalls";
 import {useSelector} from "react-redux";
 import Navbar from "../components/Navbar";
-import MenuDrawer from "../components/MenuDrawer";
 import Footer from "../components/Footer";
 import {COURSE_PAGE, NAVBAR} from "../utils/content";
 import {getWeeks} from "../utils/functions";

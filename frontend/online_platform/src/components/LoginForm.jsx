@@ -4,7 +4,7 @@ import {useEffect, useState} from 'react';
 import { useDispatch } from 'react-redux';
 import {globalSlice} from '../store/slices/globalSlice';
 import Cookies from 'js-cookie';
-import {Navigate} from 'react-router-dom';
+import {Navigate, useNavigate} from 'react-router-dom';
 import {populateGlobalSlice} from "../utils/functions";
 
 function LoginForm(params) {
@@ -16,6 +16,7 @@ function LoginForm(params) {
     const [redirect, setRedirect] = useState('');
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userEmail = Cookies.get('username');
@@ -74,7 +75,7 @@ function LoginForm(params) {
     }
 
     if (redirect) {
-        return <Navigate to={redirect} />;
+        navigate(redirect);
     }
 
     return (

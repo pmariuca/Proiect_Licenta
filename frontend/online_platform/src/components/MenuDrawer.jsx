@@ -1,5 +1,5 @@
 import {NAVBAR} from "../utils/content";
-import {Navigate} from "react-router-dom";
+import {Navigate, useNavigate} from "react-router-dom";
 import HomeSVG from "./SVG/HomeSVG";
 import TachometerSVG from "./SVG/TachometerSVG";
 import FileSVG from "./SVG/FileSVG";
@@ -10,6 +10,8 @@ function MenuDrawer(params) {
     const { courses } = params;
     const route = window.location.pathname;
 
+    const navigate = useNavigate();
+
     return (
         <div id={'menu-drawer'}>
             <ul>
@@ -18,7 +20,7 @@ function MenuDrawer(params) {
                 >
                     <button
                         onClick={() => {
-                            return <Navigate to={'/'} />
+                            navigate('/');
                         }}
                     >
                         <HomeSVG classes={'text-white mr-2'}/>

@@ -1,12 +1,18 @@
 import {useEffect, useState} from "react";
 import {getActivities} from "../utils/apiCalls";
 import TestSVG from "./SVG/TestSVG";
-import {formatDate} from "../utils/functions";
+import {formatDate, parseDateFromString} from "../utils/functions";
+import {useSelector} from "react-redux";
+import {COURSE_PAGE} from "../utils/content";
+import {useNavigate} from "react-router-dom";
 
 function WeekContainer(params) {
     const { week, course, type } = params;
 
     const [activities, setActivities] = useState([]);
+
+    const role = useSelector(state => state.global.role);
+    const navigate = useNavigate();
 
     const weekData = {
         week,
@@ -23,15 +29,31 @@ function WeekContainer(params) {
         })();
     }, []);
 
+    const addActivity = () => {
+        navigate('/add-activity', { state: { weekData } });
+    }
+
     return (
         <li className={'mt-4 pb-4 week-container'}>
-            <h3 className={'text-[1.525rem] text-primary font-light cursor-pointer hover:underline hover:decoration-1'}>
-                {week?.start} - {week?.end}
-            </h3>
+            <div className={role === 'professor' && 'flex justify-between'}>
+                <h3 className={'text-[1.525rem] text-primary font-light cursor-pointer hover:underline hover:decoration-1'}>
+                    {week?.start} - {week?.end}
+                </h3>
+
+                {role === 'professor' && (
+                    <button className={'week-text'}
+                            onClick={addActivity}
+                    >
+                        {COURSE_PAGE.ADD_ACTIVITY}
+                    </button>
+                )}
+
+            </div>
+
             <div className={'m-4'}>
                 {activities.map((activity, index) => {
                     return (
-                        <div className={activities.length > 1 && index !== activities.length-1 ? `pb-4 border-b-[0.063rem] border-solid border-[#00000020] ${index > 0 ? 'pt-4' : ''}` : ''}>
+                        <div className={activities.length > 1 && index !== activities.length-1 ? `pb-4 border-b-[0.063rem] border-solid border-[#00000020] ` : 'pt-4'}>
                             <div className={'activity-container items-end pb-2'}>
                                 <TestSVG />
                                 <span className={'week-text'}>{activity?.activity_title}</span>
