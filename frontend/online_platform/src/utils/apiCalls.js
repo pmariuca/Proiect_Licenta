@@ -106,3 +106,21 @@ export async function getActivities(weekData) {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function addActivity(activityDetails) {
+    try {
+        const response = await fetch('http://localhost:3001/activities/addActivity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({activityDetails}),
+        });
+
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}

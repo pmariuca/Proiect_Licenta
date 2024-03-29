@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import {useSelector} from "react-redux";
 import {useState} from "react";
 import Footer from "../components/Footer";
-import {useLocation} from "react-router-dom";
+import {Navigate, useLocation} from "react-router-dom";
 import TestSVG from "../components/SVG/TestSVG";
 import {ADD_ACTIVITY} from "../utils/content";
 import {parseDateFromString} from "../utils/functions";
@@ -12,6 +12,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
+import {addActivity} from "../utils/apiCalls";
 
 function AddActivityPage(params) {
     const { logoutFunction } = params;
@@ -63,8 +64,12 @@ function AddActivityPage(params) {
         setUploadType(!uploadType);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const activityDetails = {
+            courseInfo: {
+                course: state?.weekData?.course,
+                type: state?.weekData?.type
+            },
             week: {
                 start: weekStart,
                 end: weekEnd
@@ -98,7 +103,15 @@ function AddActivityPage(params) {
             }
         };
 
-        console.log(activityDetails);
+        try {
+            const response = await addActivity(activityDetails);
+
+            if(response.status === 200) {
+                window.location.href = `/course/${state?.weekData?.type}${state?.weekData?.course}`
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (

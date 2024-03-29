@@ -35,7 +35,7 @@ function WeekContainer(params) {
 
     return (
         <li className={'mt-4 pb-4 week-container'}>
-            <div className={role === 'professor' && 'flex justify-between'}>
+            <div className={role === 'professor' ? 'flex justify-between' : undefined}>
                 <h3 className={'text-[1.525rem] text-primary font-light cursor-pointer hover:underline hover:decoration-1'}>
                     {week?.start} - {week?.end}
                 </h3>

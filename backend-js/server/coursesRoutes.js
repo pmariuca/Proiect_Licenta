@@ -138,7 +138,7 @@ router.get('/getSpecificCourse', async (req, res) => {
             result = await client.query(query, [idCourse]);
         }
 
-        if(!result.rows) {
+        if(!result?.rows) {
             return res.status(404).json({success: false, data: 'There has been an error processing the request'});
         }
 
