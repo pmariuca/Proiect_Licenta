@@ -41,10 +41,6 @@ function Homepage(params) {
         }
     }, [drawerOpen]);
 
-    if(!loggedIn) {
-        window.location.href ='/login';
-    }
-
     function handleDrawer() {
         setDrawerOpen(!drawerOpen);
     }
