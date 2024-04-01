@@ -4,6 +4,7 @@ const { client, clientMongo } = require('./config');
 const authRoutes = require('./server/authRoutes');
 const coursesRoutes = require('./server/coursesRoutes');
 const activitiesRoutes = require('./server/activitiesRoutes');
+const questionsRoutes = require('./server/questionsRoutes');
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ clientMongo.connect();
 app.use('/auth', authRoutes);
 app.use('/courses', coursesRoutes);
 app.use('/activities', activitiesRoutes);
+app.use ('/questions', questionsRoutes);
 
 app.listen(3001, () => {
     console.log('Server is running on port 3001');

@@ -104,4 +104,19 @@ router.post('/addActivity', async (req, res) => {
     }
 });
 
+router.get('/getActivityDetails', async (req, res) => {
+    try {
+        const { activityID } = req.query;
+
+        const database = clientMongo.db('Activities');
+        const activities = database.collection('Activities');
+
+        const activity = await activities.findOne({ activityID });
+
+        return res.status(200).json(activity);
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
 module.exports = router;
