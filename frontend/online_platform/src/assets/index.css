@@ -52,7 +52,7 @@
   }
 
   .navbar {
-    @apply max-h-[3.125rem] w-full h-full sticky top-0 right-0 flex items-center justify-between flex-nowrap py-2 px-4 bg-white;
+    @apply max-h-[3.125rem] w-full h-full sticky top-0 right-0 flex items-center justify-between flex-nowrap py-2 px-4 bg-white z-10;
   }
 
   .profile-dropdown {
@@ -164,11 +164,15 @@
   left: 0;
 }
 
-.homepage-container {
+.homepage-container,
+.courses-weeks-container,
+.activity-add-container {
   transition: margin-left 0.5s ease, margin-right 0.5s ease
 }
 
-#menu-drawer.open + .homepage-container {
+#menu-drawer.open + .homepage-container,
+#menu-drawer.open + .courses-weeks-container,
+#menu-drawer.open + .activity-add-container {
   margin-left: 17.813rem;
 }
 

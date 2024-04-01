@@ -113,5 +113,6 @@ export const ADD_ACTIVITY = {
         NUMBER_OF_QUESTIONS: 'Numărul de întrebări',
         TIME_LIMIT: 'Limită de timp'
     },
-    BUTTON: 'Adaugă'
+    BUTTON: 'Adaugă',
+    ALERT: 'Toate câmpurile sunt obligatorii!'
 }

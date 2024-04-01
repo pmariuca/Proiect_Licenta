@@ -6,6 +6,7 @@ import {getCoursesProfessors, getCoursesStudents} from "../utils/apiCalls";
 import {NAVBAR, PLATFORM_DETAILS} from "../utils/content";
 import CourseContainer from "../components/CourseContainer";
 import Footer from "../components/Footer";
+import {Navigate} from "react-router-dom";
 
 function Homepage(params) {
     const { logoutFunction } = params;
@@ -29,9 +30,8 @@ function Homepage(params) {
                 const response = await getCoursesProfessors(username);
                 setCourses(response?.responseJSON?.data);
             }
-
         })();
-    }, []);
+    }, [role, username]);
 
     useEffect(() => {
         if(drawerOpen) {
@@ -43,6 +43,10 @@ function Homepage(params) {
 
     function handleDrawer() {
         setDrawerOpen(!drawerOpen);
+    }
+
+    if(!loggedIn) {
+        return <Navigate to={'/login'} />;
     }
 
     return (

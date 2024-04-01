@@ -124,3 +124,29 @@ export async function addActivity(activityDetails) {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function getActivityDetials(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/activities/getActivityDetails');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getQuestions(numberOfQuestions) {
+    try {
+        const url = new URL('http://localhost:3001/questions/getQuestions');
+        url.searchParams.append('numberOfQuestions', numberOfQuestions);
+
+        const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}

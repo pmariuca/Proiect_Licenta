@@ -54,10 +54,11 @@ function WeekContainer(params) {
                 {activities.map((activity, index) => {
                     return (
                         <div className={activities.length > 1 && index !== activities.length-1 ? `pb-4 border-b-[0.063rem] border-solid border-[#00000020] ` : 'pt-4'}>
-                            <div className={'activity-container items-end pb-2'}>
+                            <a href={`/test/${activity?.activityID}`}
+                                className={'activity-container items-end pb-2'}>
                                 <TestSVG />
                                 <span className={'week-text'}>{activity?.activity_title}</span>
-                            </div>
+                            </a>
                             {activity?.open && activity?.close ? (
                                 <>
                                     <div className={'text-[0.931rem]'}>

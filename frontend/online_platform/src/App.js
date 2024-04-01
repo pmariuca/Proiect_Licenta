@@ -8,10 +8,11 @@ import {useDispatch} from "react-redux";
 import {populateGlobalSlice} from "./utils/functions";
 import CoursePage from "./pages/CoursePage";
 import AddActivityPage from "./pages/AddActivityPage";
+import TestPage from "./pages/TestPage";
 
 
 function App() {
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [loggedIn, setLoggedIn] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
     const dispatch = useDispatch();
@@ -63,6 +64,7 @@ function App() {
                 <Route path='/login' element={loggedIn ? <Navigate to={'/'}/> : <Login/>} />
                 <Route path='/course/:id' element={<CoursePage logoutFunction={handleLogoutToken} />}/>
                 <Route path='/add-activity' element={<AddActivityPage logoutFunction={handleLogoutToken}/>} />
+                <Route path={'/test/:id'} element={<TestPage logoutFunction={handleLogoutToken}/>} />
             </Routes>
         </Router>
     );
