@@ -1,6 +1,6 @@
 import {useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {getSpecificCourse} from "../utils/apiCalls";
+import {getCoursesProfessors, getCoursesStudents, getSpecificCourse} from "../utils/apiCalls";
 import {useSelector} from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
@@ -9,6 +9,7 @@ import {getWeeks} from "../utils/functions";
 import PdfSVG from "../components/SVG/PdfSVG";
 import ChatSVG from "../components/SVG/ChatSVG";
 import WeekContainer from "../components/WeekContainer";
+import MenuDrawer from "../components/MenuDrawer";
 
 function CoursePage(params) {
     const { logoutFunction } = params;
@@ -16,12 +17,15 @@ function CoursePage(params) {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [weeks, setWeeks] = useState([]);
 
+    const [courses, setCourses] = useState({});
+
     const { pathname } = useLocation();
     const idCourse = pathname.split('/')[2];
 
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);
     const surname = useSelector(state => state.global.surname);
+    const role = useSelector(state => state.global.role);
 
     const userName = name?.toUpperCase() + ' ' + surname;
 
@@ -32,7 +36,25 @@ function CoursePage(params) {
         })();
 
         setWeeks(getWeeks());
+
+        (async () => {
+            if(role === 'student') {
+                const response = await getCoursesStudents(username);
+                setCourses(response?.responseJSON?.data);
+            } else if(role === 'professor') {
+                const response = await getCoursesProfessors(username);
+                setCourses(response?.responseJSON?.data);
+            }
+        })();
     }, []);
+
+    useEffect(() => {
+        if(drawerOpen) {
+            document.getElementById('menu-drawer')?.classList.add('open');
+        } else {
+            document.getElementById('menu-drawer')?.classList.remove('open');
+        }
+    }, [drawerOpen]);
 
     function handleDrawer() {
         setDrawerOpen(!drawerOpen);
@@ -41,7 +63,8 @@ function CoursePage(params) {
     return (
         <div className={'page-container'}>
             <Navbar userName={userName} handleDrawer={handleDrawer} handleLogoutToken={logoutFunction}/>
-            <div className={'p-[0.938rem]'}>
+            <MenuDrawer courses={courses} />
+            <div className={'courses-weeks-container p-[0.938rem]'}>
                 <div className={'course-border p-5 mb-4'}>
                     <div className={'font-light text-[2.125rem] mb-2'}>
                         {courseData?.subject?.name_subject}, Tip-{idCourse[0].toUpperCase()}, Sem-{courseData?.subject?.id_semester}, Zi (2023-2024)

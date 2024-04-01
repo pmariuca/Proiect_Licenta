@@ -10,7 +10,7 @@ function CourseContainer(params) {
                 <div className={'flex justify-between m-[0.313rem]'}>
                     <div className={'flex flex-row align-baseline'}>
                         <div className={'m-auto'}>
-                            <CourseHomepageSVG/>
+                            <CourseHomepageSVG />
                         </div>
                         <a href={`/course/c${course?.course?.id_course}`}
                             className={'ml-2 text-primary text-[1.563rem] font-light hover:underline'}>
