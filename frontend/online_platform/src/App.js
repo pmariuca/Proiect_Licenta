@@ -9,6 +9,8 @@ import {populateGlobalSlice} from "./utils/functions";
 import CoursePage from "./pages/CoursePage";
 import AddActivityPage from "./pages/AddActivityPage";
 import TestPage from "./pages/TestPage";
+import Authenticate from "./pages/Authenticate";
+import QuestionPage from "./pages/QuestionPage";
 
 
 function App() {
@@ -65,6 +67,8 @@ function App() {
                 <Route path='/course/:id' element={<CoursePage logoutFunction={handleLogoutToken} />}/>
                 <Route path='/add-activity' element={<AddActivityPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id'} element={<TestPage logoutFunction={handleLogoutToken}/>} />
+                <Route path={'/test/:id/:currentQuestion'} element={<QuestionPage />} />
+                <Route path={'/authenticate'} element={<Authenticate logoutFunction={handleLogoutToken}/>} />
             </Routes>
         </Router>
     );

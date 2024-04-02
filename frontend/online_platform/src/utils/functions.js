@@ -1,6 +1,8 @@
 import {startOfWeek, endOfWeek, eachWeekOfInterval, format, parse} from 'date-fns';
 import { ro } from 'date-fns/locale';
 import {globalSlice} from "../store/slices/globalSlice";
+import {testSlice} from "../store/slices/testSlice";
+import {courseSlice} from "../store/slices/courseSlice";
 
 export function populateGlobalSlice(userData, dispatch) {
     const {username, name, surname, token} = userData;
@@ -19,6 +21,15 @@ export function populateGlobalSlice(userData, dispatch) {
     dispatch(globalSlice.actions.setName(name));
     dispatch(globalSlice.actions.setSurname(surname));
     dispatch(globalSlice.actions.setRole(role));
+}
+
+export function populateTestSlice(testData, dispatch) {
+    const {activity, questions} = testData;
+
+    dispatch(testSlice.actions.setActivity(activity));
+    dispatch(testSlice.actions.setQuestions(questions));
+    dispatch(testSlice.actions.setCurrentQuestion(0));
+    dispatch(testSlice.actions.setAnswers([]));
 }
 
 export function getWeeks() {
@@ -62,4 +73,17 @@ export function parseDateFromString(dateString) {
     const date = new Date(2024, monthIndex, day);
 
     return date;
+}
+export function verifyDate(disponibility) {
+    const currentDateTime = new Date();
+    if(!disponibility?.limitDate) {
+        const startDateTime = new Date(`${disponibility?.startDate.substring(0, 11)}${disponibility?.startTime}:00.000Z`);
+        const endDateTime = new Date(`${disponibility?.endDate.substring(0, 11)}${disponibility?.endTime}:00.000Z`);
+
+        return currentDateTime >= startDateTime && currentDateTime <= endDateTime;
+    } else {
+        const limitDateTime = new Date(`${disponibility?.limitDate.substring(0, 11)}${disponibility?.endTime}:00.000Z`)
+
+        return currentDateTime <=limitDateTime;
+    }
 }

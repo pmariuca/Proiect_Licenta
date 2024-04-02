@@ -116,3 +116,12 @@ export const ADD_ACTIVITY = {
     BUTTON: 'Adaugă',
     ALERT: 'Toate câmpurile sunt obligatorii!'
 }
+
+export const TEST_PAGE = {
+    BACHELOR: 'Licență',
+    FACE_RECOGNITION: 'Pentru acest test este necesară recunoașterea facială.',
+    HUBSTAFF: 'Pentru acest test este necesară folosirea aplicației Hubstaff.',
+    START_MSG: 'Pentru a începe testul, apasă butonul de mai jos.',
+    START_BUTTON: 'Începe testul',
+    TEST_UNAVAILABLE: 'Testul nu este disponibil.'
+}

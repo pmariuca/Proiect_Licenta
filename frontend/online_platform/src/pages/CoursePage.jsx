@@ -1,15 +1,16 @@
 import {useLocation} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {getCoursesProfessors, getCoursesStudents, getSpecificCourse} from "../utils/apiCalls";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {COURSE_PAGE, NAVBAR} from "../utils/content";
-import {getWeeks} from "../utils/functions";
+import {getWeeks, populateCourseSlice} from "../utils/functions";
 import PdfSVG from "../components/SVG/PdfSVG";
 import ChatSVG from "../components/SVG/ChatSVG";
 import WeekContainer from "../components/WeekContainer";
 import MenuDrawer from "../components/MenuDrawer";
+import {courseSlice} from "../store/slices/courseSlice";
 
 function CoursePage(params) {
     const { logoutFunction } = params;
@@ -19,6 +20,7 @@ function CoursePage(params) {
 
     const [courses, setCourses] = useState({});
 
+    const dispatch = useDispatch();
     const { pathname } = useLocation();
     const idCourse = pathname.split('/')[2];
 
