@@ -83,6 +83,10 @@
     @apply border-b-[0.063rem] border-solid border-[#00000020];
   }
 
+  .week-container:last-of-type {
+    @apply border-0;
+  }
+
   .week-activity-spaced {
     @apply pt-4;
   }
