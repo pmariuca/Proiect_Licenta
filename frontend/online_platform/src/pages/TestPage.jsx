@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {getActivityDetials, getQuestions, getSpecificCourse} from "../utils/apiCalls";
+import {checkSubmission, getActivityDetials, getQuestions, getSpecificCourse} from "../utils/apiCalls";
 import {formatDate, populateTestSlice, verifyDate} from "../utils/functions";
 import {COURSE_PAGE, NAVBAR, TEST_PAGE} from "../utils/content";
 import {useNavigate} from "react-router-dom";
@@ -113,7 +113,7 @@ function TestPage(params) {
                     </div>
 
                     <div className={'flex justify-center'}>
-                        {verifyDate(activity?.disponibility) ? (
+                        {verifyDate(activity?.disponibility) && !checkSubmission(username, activityID) ? (
                             <button className={'bg-primary px-4 py-2 text-text-secondary font-light mt-8'}
                                     onClick={handleStartTest}
                             >
