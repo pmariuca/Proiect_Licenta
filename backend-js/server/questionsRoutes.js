@@ -24,4 +24,27 @@ router.get('/getQuestions', async (req, res) => {
     }
 });
 
+router.post('/submitAnswers', async (req, res) => {
+    try {
+        const {username, activityID, answers} = req.body;
+
+        const examsDatabase = clientMongo.db('Exams');
+        const exams = examsDatabase.collection('Exams');
+
+        const submission = { username, answers };
+        const updateResult = await exams.updateOne(
+            { activityID: activityID },
+            { $push: { submits: submission } }
+        );
+
+        if(updateResult.modifiedCount === 0) {
+            return res.status(404).json({success: false, data: 'There has been an error processing the request'});
+        }
+
+        res.status(200).send({ message: 'Answers submitted successfully' });
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
 module.exports = router;

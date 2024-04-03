@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {getActivityDetials, getQuestions, getSpecificCourse} from "../utils/apiCalls";
 import {formatDate, populateTestSlice, verifyDate} from "../utils/functions";
 import {COURSE_PAGE, NAVBAR, TEST_PAGE} from "../utils/content";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 function TestPage(params) {
     const { logoutFunction } = params;
@@ -17,8 +17,8 @@ function TestPage(params) {
     const navigate = useNavigate();
 
     const idCourse = window.location.href.split('/')[4].slice(0, 2);
-    const dispatch = useDispatch();
     const activityID = window.location.href.split('/')[4];
+    const dispatch = useDispatch();
 
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);

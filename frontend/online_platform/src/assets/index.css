@@ -123,6 +123,10 @@
   textarea:focus, textarea:focus-visible {
     @apply outline-0;
   }
+
+  .question-container {
+    @apply min-h-[35.313rem] p-[0.938rem];
+  }
 }
 
 .menu-drawer-item.home {

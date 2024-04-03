@@ -29,7 +29,7 @@ export function populateTestSlice(testData, dispatch) {
     dispatch(testSlice.actions.setActivity(activity));
     dispatch(testSlice.actions.setQuestions(questions));
     dispatch(testSlice.actions.setCurrentQuestion(0));
-    dispatch(testSlice.actions.setAnswers([]));
+    dispatch(testSlice.actions.setAnswer([]));
 }
 
 export function getWeeks() {

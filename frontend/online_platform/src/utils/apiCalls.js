@@ -1,3 +1,6 @@
+import {useSelector} from "react-redux";
+import {testSlice} from "../store/slices/testSlice";
+
 export async function logUser(userData) {
     try {
         const { username, password } = userData;
@@ -119,7 +122,6 @@ export async function addActivity(activityDetails) {
 
         const responseJSON = await response.json();
         return {responseJSON, status: response.status};
-
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
     }
@@ -144,6 +146,23 @@ export async function getQuestions(numberOfQuestions) {
         url.searchParams.append('numberOfQuestions', numberOfQuestions);
 
         const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function submitAnswers(username, activityID, answers) {
+    try {
+        const response = await fetch('http://localhost:3001/questions/submitAnswers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({username, activityID, answers}),
+        });
+
         const responseJSON = await response.json();
         return {responseJSON, status: response.status};
     } catch (error) {

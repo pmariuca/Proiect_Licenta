@@ -4,7 +4,7 @@ const initialState = {
     activity: null,
     questions: null,
     currentQuestion: null,
-    answers: null
+    answers: []
 };
 
 export const testSlice = createSlice({
@@ -20,8 +20,10 @@ export const testSlice = createSlice({
         setCurrentQuestion: (state, action) => {
             state.currentQuestion = action.payload;
         },
-        setAnswers: (state, action) => {
-            state.answers = action.payload;
+        setAnswer: (state, action) => {
+            if (state.answers && state.currentQuestion != null) {
+                state.answers[state.currentQuestion] = action.payload;
+            }
         }
     }
 });

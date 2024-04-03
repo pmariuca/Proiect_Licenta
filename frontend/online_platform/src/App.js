@@ -67,7 +67,7 @@ function App() {
                 <Route path='/course/:id' element={<CoursePage logoutFunction={handleLogoutToken} />}/>
                 <Route path='/add-activity' element={<AddActivityPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id'} element={<TestPage logoutFunction={handleLogoutToken}/>} />
-                <Route path={'/test/:id/:currentQuestion'} element={<QuestionPage />} />
+                <Route path={'/test/:id/:currentQuestion'} element={<QuestionPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/authenticate'} element={<Authenticate logoutFunction={handleLogoutToken}/>} />
             </Routes>
         </Router>

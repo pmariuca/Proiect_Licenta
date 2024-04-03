@@ -125,3 +125,10 @@ export const TEST_PAGE = {
     START_BUTTON: 'Începe testul',
     TEST_UNAVAILABLE: 'Testul nu este disponibil.'
 }
+
+export const QUESTION_PAGE = {
+    TITLE: 'Întrebarea ',
+    NEXT: 'Următoarea întrebare',
+    SUBMIT: 'Trimite răspunsul',
+    TIME_LEFT: 'Timp rămas: ',
+}

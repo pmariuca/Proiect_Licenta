@@ -97,6 +97,14 @@ router.post('/addActivity', async (req, res) => {
             }
         );
 
+        const examsDatabase = clientMongo.db('Exams');
+        const exams = examsDatabase.collection('Exams');
+
+        await exams.insertOne({
+            'activityID': id,
+            'submits': []
+        });
+
         return res.status(200).json({ message: 'Activity added successfully' });
 
     } catch (error) {
