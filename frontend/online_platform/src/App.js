@@ -11,6 +11,7 @@ import AddActivityPage from "./pages/AddActivityPage";
 import TestPage from "./pages/TestPage";
 import Authenticate from "./pages/Authenticate";
 import QuestionPage from "./pages/QuestionPage";
+import ClosedTestPage from "./pages/ClosedTestPage";
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
                 <Route path='/add-activity' element={<AddActivityPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id'} element={<TestPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id/:currentQuestion'} element={<QuestionPage logoutFunction={handleLogoutToken}/>} />
+                <Route path={'/test/:id/end'} element={<ClosedTestPage logoutFunction={handleLogoutToken}/>}/>
                 <Route path={'/authenticate'} element={<Authenticate logoutFunction={handleLogoutToken}/>} />
             </Routes>
         </Router>
