@@ -169,3 +169,21 @@ export async function submitAnswers(username, activityID, answers) {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function checkSubmission(username, activityID) {
+    try {
+        const url = new URL('http://localhost:3001/activities/checkSubmission');
+        url.searchParams.append('username', username);
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+
+        if(response.status === 200) {
+            return false;
+        } else if(response.status === 403) {
+            return true;
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}

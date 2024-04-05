@@ -131,4 +131,6 @@ export const QUESTION_PAGE = {
     NEXT: 'Următoarea întrebare',
     SUBMIT: 'Trimite răspunsul',
     TIME_LEFT: 'Timp rămas: ',
+    ANSWERS_SAVED: 'Răspunsurile au fost salvate. Puteți să vă întoarceți pe Homepage.',
+    HOMEPAGE: 'Homepage'
 }
