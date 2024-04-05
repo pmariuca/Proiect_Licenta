@@ -174,14 +174,20 @@
 
 .homepage-container,
 .courses-weeks-container,
-.activity-add-container {
+.activity-add-container,
+.footer-container {
   transition: margin-left 0.5s ease, margin-right 0.5s ease
 }
 
 #menu-drawer.open + .homepage-container,
 #menu-drawer.open + .courses-weeks-container,
-#menu-drawer.open + .activity-add-container {
+#menu-drawer.open + .activity-add-container,
+#menu-drawer.open ~ .footer-container {
   margin-left: 17.813rem;
+}
+
+#menu-drawer.open ~ .footer-container > div {
+  padding-left: 2.5rem;
 }
 
 .courses-container {
