@@ -7,7 +7,7 @@ function Footer() {
     const surname = useSelector((state) => state.global.surname);
 
     return (
-        <div className={'bg-footer'}>
+        <div className={'footer-container bg-footer'}>
             <div className={'content-container flex flex-col py-4 text-light-grey'}>
                 {loggedIn ? (
                     <span className="text-[0.938rem]">
