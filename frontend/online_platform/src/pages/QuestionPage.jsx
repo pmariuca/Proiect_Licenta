@@ -49,7 +49,11 @@ function QuestionPage(params) {
             setTimeLeft((time) => {
                 if (time <= 1) {
                     clearInterval(timer);
+
+                    dispatch(finishTest({ username, activityID, answers: [...answers, selectedAnswer] }));
+                    dispatch(testSlice.actions.setTestActive(false));
                     navigate(`/test/${activityID}/end`);
+
                     return 0;
                 }
                 return time - 1;
@@ -75,6 +79,8 @@ function QuestionPage(params) {
 
         if(currentQuestion + 1 === noOfQuestions) {
             dispatch(finishTest({ username, activityID, answers: [...answers, selectedAnswer] }));
+            dispatch(testSlice.actions.setTestActive(false));
+
             navigate(`/test/${activityID}/end`);
         } else {
             dispatch(testSlice.actions.setCurrentQuestion(currentQuestion + 1));
