@@ -4,7 +4,8 @@ const initialState = {
     activity: null,
     questions: null,
     currentQuestion: null,
-    answers: []
+    answers: [],
+    isTestActive: false
 };
 
 export const testSlice = createSlice({
@@ -24,6 +25,9 @@ export const testSlice = createSlice({
             if (state.answers && state.currentQuestion != null) {
                 state.answers[state.currentQuestion] = action.payload;
             }
+        },
+        setTestActive: (state, action) => {
+            state.isTestActive = action.payload;
         }
     }
 });

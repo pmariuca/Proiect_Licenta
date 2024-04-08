@@ -4,7 +4,7 @@ import Login from './pages/Login';
 import Homepage from "./pages/Homepage";
 import {useEffect, useState} from "react";
 import {retrieveUserData, verifyToken} from "./utils/apiCalls";
-import {useDispatch} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {populateGlobalSlice} from "./utils/functions";
 import CoursePage from "./pages/CoursePage";
 import AddActivityPage from "./pages/AddActivityPage";
@@ -18,6 +18,7 @@ function App() {
     const [loggedIn, setLoggedIn] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    const isTestActive = useSelector(state => state.test.isTestActive);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -51,6 +52,55 @@ function App() {
             setIsLoading(false);
         }
     }, [loggedIn]);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            // Verifică dacă testul este activ și utilizatorul apasă Ctrl+C
+            if(isTestActive && event.ctrlKey && event.key === 'c') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+C în timpul testului');
+            }
+
+            if(isTestActive && event.ctrlKey && event.key === 'x') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+X în timpul testului');
+            }
+
+            if(isTestActive && event.ctrlKey && event.key === 'v') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+V în timpul testului');
+            }
+
+            if(isTestActive && event.metaKey && event.shiftKey && event.key === 's') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+Shift în timpul testului');
+            }
+        };
+
+        const blockRightClick = (event) => {
+            if(isTestActive) {
+                event.preventDefault();
+                console.log('Click dreapta blocat.');
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('contextmenu', blockRightClick);
+
+        // verificare alt tab
+        window.addEventListener("visibilitychange", function() {
+            if(isTestActive) {
+                if (document.visibilityState !== 'visible') {
+                    console.log("Pagina este în fundal");
+                }
+            }
+        });
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('contextmenu', blockRightClick);
+        };
+    }, [isTestActive]);
 
     if (isLoading) {
         return <div></div>;

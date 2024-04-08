@@ -127,7 +127,7 @@ router.get('/getActivityDetails', async (req, res) => {
     }
 });
 
-router.get('/checkSubmissions', async (req, res) => {
+router.get('/checkSubmission', async (req, res) => {
    try {
        const { username, activityID } = req.query;
 
@@ -138,10 +138,10 @@ router.get('/checkSubmissions', async (req, res) => {
            { activityID: activityID, "submits.username": username }
        );
 
-       if (submissionExists) {
-           res.status(200).send({ message: 'Submission found for this user.' });
+       if (submissionExists !== null) {
+           res.status(302).send({ message: 'Submission found for this user.' });
        } else {
-           res.status(403).send({ message: 'No submission found for this user.' });
+           res.status(200).send({ message: 'No submission found for this user.' });
        }
    } catch (error) {
        console.log('There has been an error processing the request: ', error);

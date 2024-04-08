@@ -24,7 +24,7 @@ function CourseContainer(params) {
                     <div className={'font-normal text-[#1D2125] text-[0.875rem]'}>
                         Formator:
                         <span className={'text-primary cursor-pointer ml-2 hover:underline hover:decoration-1'}>
-                            {course.professor}
+                            {course.course.professor}
                         </span>
                     </div>
                     <div className={'w-[55%] font-normal text-[#1D2125] text-[0.875rem]'}>
@@ -50,7 +50,7 @@ function CourseContainer(params) {
                     <div className={'font-normal text-[#1D2125] text-[0.875rem]'}>
                         Formator:
                         <span className={'text-primary cursor-pointer ml-2 hover:underline hover:decoration-1'}>
-                            {course.professor}
+                            {course.course.professor}
                         </span>
                     </div>
                     <div className={'w-[55%] font-normal text-[#1D2125] text-[0.875rem]'}>

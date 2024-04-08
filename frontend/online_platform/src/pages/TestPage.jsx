@@ -4,12 +4,16 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {checkSubmission, getActivityDetials, getQuestions, getSpecificCourse} from "../utils/apiCalls";
 import {formatDate, populateTestSlice, verifyDate} from "../utils/functions";
-import {COURSE_PAGE, NAVBAR, TEST_PAGE} from "../utils/content";
+import {TEST_PAGE} from "../utils/content";
 import {useNavigate} from "react-router-dom";
 import ActivityTitle from "../components/ActivityTitle";
+import {testSlice} from "../store/slices/testSlice";
 
 function TestPage(params) {
     const { logoutFunction } = params;
+
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [courseData, setCourseData] = useState({});
     const [activity, setActivity] = useState(null);
@@ -36,6 +40,9 @@ function TestPage(params) {
 
             const response_course = await getSpecificCourse(idCourse);
             setCourseData(response_course?.responseJSON?.data);
+
+            const hasSubmitted = await checkSubmission(username, activityID);
+            setIsSubmitted(hasSubmitted);
         })();
     }, []);
 
@@ -56,6 +63,7 @@ function TestPage(params) {
     }, [activity]);
 
     const handleStartTest = () => {
+        dispatch(testSlice.actions.setTestActive(true))
         if(activity?.access?.frc) {
             navigate('/authenticate');
         } else {
@@ -111,9 +119,8 @@ function TestPage(params) {
                     <div className={'text-[0.931rem] font-light'}>
                         {TEST_PAGE.START_MSG}
                     </div>
-
                     <div className={'flex justify-center'}>
-                        {verifyDate(activity?.disponibility) && !checkSubmission(username, activityID) ? (
+                        {verifyDate(activity?.disponibility) && isSubmitted === false ? (
                             <button className={'bg-primary px-4 py-2 text-text-secondary font-light mt-8'}
                                     onClick={handleStartTest}
                             >

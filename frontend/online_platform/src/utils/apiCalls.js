@@ -180,7 +180,7 @@ export async function checkSubmission(username, activityID) {
 
         if(response.status === 200) {
             return false;
-        } else if(response.status === 403) {
+        } else if(response.status === 302) {
             return true;
         }
     } catch (error) {
