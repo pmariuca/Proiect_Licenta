@@ -8,7 +8,10 @@ import {useNavigate} from "react-router-dom";
 import {getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
 import {finishTest} from "../store/thunks/finishTestThunk";
 import ActivityTitle from "../components/ActivityTitle";
+
 let submitPerformed = false;
+let showedAlert = false;
+
 function QuestionPage(params) {
     const { logoutFunction } = params || {};
 
@@ -37,8 +40,6 @@ function QuestionPage(params) {
     const currentQuestion = useSelector(state => state.test.currentQuestion);
     const answers = useSelector(state => state.test.answers);
 
-
-
     useEffect(() => {
         (async () => {
             const response = await getActivityDetials(activityID);
@@ -53,7 +54,7 @@ function QuestionPage(params) {
         }, 1000);
 
         return () => clearInterval(timer);
-    }, [activityID, answers, dispatch, idCourse, navigate, selectedAnswer, username]);
+    }, [activityID, idCourse]);
 
     useEffect(() => {
         const submitResults = async () => {
@@ -65,7 +66,7 @@ function QuestionPage(params) {
             submitPerformed = true;
             submitResults();
         }
-    }, [activityID, answers, dispatch, navigate, selectedAnswer, timeLeft, username]);
+    }, [timeLeft]);
 
     useEffect(() => {
         setSelectedAnswer('');
@@ -73,47 +74,49 @@ function QuestionPage(params) {
 
     useEffect(() => {
         const handleKeyDown = (event) => {
-            // Verifică dacă testul este activ și utilizatorul apasă Ctrl+C
             if(isTestActive && event.ctrlKey && event.key === 'c') {
                 event.preventDefault();
-                console.log('Blocarea combinației Ctrl+C în timpul testului');
+                if(!showedAlert) {
+                    showAlert();
+                }
             }
 
             if(isTestActive && event.ctrlKey && event.key === 'x') {
                 event.preventDefault();
-                console.log('Blocarea combinației Ctrl+X în timpul testului');
+                if(!showedAlert) {
+                    showAlert();
+                }
             }
 
             if(isTestActive && event.ctrlKey && event.key === 'v') {
                 event.preventDefault();
-                console.log('Blocarea combinației Ctrl+V în timpul testului');
-            }
-
-            if(isTestActive && event.metaKey && event.shiftKey && event.key === 's') {
-                event.preventDefault();
-                console.log('Blocarea combinației Ctrl+Shift în timpul testului');
+                if(!showedAlert) {
+                    showAlert();
+                }
             }
         };
 
         const blockRightClick = (event) => {
             if(isTestActive) {
                 event.preventDefault();
-                console.log('Click dreapta blocat.');
+                if(!showedAlert) {
+                    showAlert();
+                }
             }
         };
 
         const verifyChangedApp = () => {
             if(isTestActive) {
                 if (document.visibilityState !== 'visible') {
-                    console.log("Pagina este în fundal");
+                    if(!showedAlert) {
+                        showAlert();
+                    }
                 }
             }
         }
 
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('contextmenu', blockRightClick);
-
-        // verificare alt tab sau inchidere pagina
         window.addEventListener("visibilitychange", verifyChangedApp);
 
         return () => {
@@ -164,6 +167,13 @@ function QuestionPage(params) {
         });
     }, [questions, currentQuestion, selectedAnswer]);
 
+    const showAlert = () => {
+        const alertElement = document.getElementById('fraud-alert');
+        alertElement.style.opacity = '1';
+        alertElement.style.animation = 'fadeOut 20s ease forwards';
+        showedAlert = true;
+    }
+
     return (
         <div className={'page-container'}>
             <Navbar userName={userName} handleLogoutToken={logoutFunction}/>
@@ -203,6 +213,10 @@ function QuestionPage(params) {
                                 QUESTION_PAGE.NEXT
                             }
                         </button>
+                    </div>
+
+                    <div id={'fraud-alert'} className={'bg-red-700 absolute p-4 bottom-[2rem] left-[30.5rem] text-text-secondary'}>
+                        {QUESTION_PAGE.ALERT}
                     </div>
                 </div>
             </div>
