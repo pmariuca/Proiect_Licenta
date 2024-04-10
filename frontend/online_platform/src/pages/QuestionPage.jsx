@@ -2,15 +2,15 @@ import Navbar from "../components/Navbar";
 import {useDispatch, useSelector} from "react-redux";
 import Footer from "../components/Footer";
 import {QUESTION_PAGE} from "../utils/content";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {testSlice} from "../store/slices/testSlice";
 import {useNavigate} from "react-router-dom";
 import {getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
 import {finishTest} from "../store/thunks/finishTestThunk";
 import ActivityTitle from "../components/ActivityTitle";
-
+let submitPerformed = false;
 function QuestionPage(params) {
-    const { logoutFunction } = params;
+    const { logoutFunction } = params || {};
 
     const [courseData, setCourseData] = useState({});
     const [activity, setActivity] = useState(null);
@@ -24,6 +24,7 @@ function QuestionPage(params) {
     const surname = useSelector(state => state.global.surname);
     const userName = name?.toUpperCase() + ' ' + surname;
 
+    const isTestActive = useSelector(state => state.test.isTestActive);
     const activityID = useSelector(state => state.test.activity.activityID);
     const noOfQuestions = Number(useSelector(state => state.test.activity.questions.noOfQuestions));
 
@@ -36,6 +37,8 @@ function QuestionPage(params) {
     const currentQuestion = useSelector(state => state.test.currentQuestion);
     const answers = useSelector(state => state.test.answers);
 
+
+
     useEffect(() => {
         (async () => {
             const response = await getActivityDetials(activityID);
@@ -46,26 +49,79 @@ function QuestionPage(params) {
         })();
 
         const timer = setInterval(() => {
-            setTimeLeft((time) => {
-                if (time <= 1) {
-                    clearInterval(timer);
-
-                    dispatch(finishTest({ username, activityID, answers: [...answers, selectedAnswer] }));
-                    dispatch(testSlice.actions.setTestActive(false));
-                    navigate(`/test/${activityID}/end`);
-
-                    return 0;
-                }
-                return time - 1;
-            });
+            setTimeLeft((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
         }, 1000);
 
         return () => clearInterval(timer);
-    }, []);
+    }, [activityID, answers, dispatch, idCourse, navigate, selectedAnswer, username]);
+
+    useEffect(() => {
+        const submitResults = async () => {
+            await dispatch(finishTest({username, activityID, answers: [...answers, selectedAnswer]}));
+            await dispatch(testSlice.actions.setTestActive(false));
+            navigate(`/test/${activityID}/end`);
+        };
+        if(timeLeft === 0 && !submitPerformed) {
+            submitPerformed = true;
+            submitResults();
+        }
+    }, [activityID, answers, dispatch, navigate, selectedAnswer, timeLeft, username]);
 
     useEffect(() => {
         setSelectedAnswer('');
     }, [currentQuestion]);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            // Verifică dacă testul este activ și utilizatorul apasă Ctrl+C
+            if(isTestActive && event.ctrlKey && event.key === 'c') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+C în timpul testului');
+            }
+
+            if(isTestActive && event.ctrlKey && event.key === 'x') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+X în timpul testului');
+            }
+
+            if(isTestActive && event.ctrlKey && event.key === 'v') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+V în timpul testului');
+            }
+
+            if(isTestActive && event.metaKey && event.shiftKey && event.key === 's') {
+                event.preventDefault();
+                console.log('Blocarea combinației Ctrl+Shift în timpul testului');
+            }
+        };
+
+        const blockRightClick = (event) => {
+            if(isTestActive) {
+                event.preventDefault();
+                console.log('Click dreapta blocat.');
+            }
+        };
+
+        const verifyChangedApp = () => {
+            if(isTestActive) {
+                if (document.visibilityState !== 'visible') {
+                    console.log("Pagina este în fundal");
+                }
+            }
+        }
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('contextmenu', blockRightClick);
+
+        // verificare alt tab sau inchidere pagina
+        window.addEventListener("visibilitychange", verifyChangedApp);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('contextmenu', blockRightClick);
+            window.removeEventListener('visibilitychange', verifyChangedApp);
+        };
+    }, [isTestActive]);
 
     const formatTimeLeft = () => {
         const minutes = Math.floor(timeLeft / 60);
@@ -87,6 +143,26 @@ function QuestionPage(params) {
             navigate(`/test/${activityID}/${currentQuestion + 1}`);
         }
     }
+
+    const renderQuestions = useMemo(() => {
+        return questions[currentQuestion]?.question?.answers.map((answer, index) => {
+            return (
+                <li key={index}>
+                    <input
+                        type="radio"
+                        name="answer"
+                        value={answer}
+                        id={answer}
+                        checked={selectedAnswer === answer}
+                        onChange={(e) => setSelectedAnswer(e.target.value)}
+                    />
+                    <label htmlFor={answer} className="ml-2">
+                        {answer}
+                    </label>
+                </li>
+            );
+        });
+    }, [questions, currentQuestion, selectedAnswer]);
 
     return (
         <div className={'page-container'}>
@@ -114,22 +190,7 @@ function QuestionPage(params) {
 
                         <div>
                             <ul>
-                                {
-                                    questions[currentQuestion]?.question?.answers.map((answer, index) => {
-                                        return (
-                                            <li key={index}>
-                                                <input type={'radio'} name={'answer'}
-                                                       value={answer}
-                                                       checked={selectedAnswer === answer}
-                                                       onChange={(e) => setSelectedAnswer(e.target.value)}
-                                                />
-                                                <label className={'ml-2'}>
-                                                    {answer}
-                                                </label>
-                                            </li>
-                                        )
-                                    })
-                                }
+                                {renderQuestions}
                             </ul>
                         </div>
                     </div>
