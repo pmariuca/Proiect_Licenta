@@ -197,3 +197,16 @@
   width: calc(100% - 21.563rem);
   border: 1px solid #00000020;
 }
+
+#fraud-alert {
+  opacity: 0;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}

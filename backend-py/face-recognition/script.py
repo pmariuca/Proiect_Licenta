@@ -14,7 +14,7 @@ application = firebase_admin.initialize_app(firebase_credentials, {
 })
 
 bucket = storage.bucket()
-blob = bucket.get_blob('pricopmariuca21@stud.ase.ro.jpeg')
+blob = bucket.get_blob('popescusimona21@stud.ase.ro.jpeg')
 array = np.frombuffer(blob.download_as_string(), np.uint8)
 input_image = cv2.imdecode(array, cv2.IMREAD_COLOR)
 

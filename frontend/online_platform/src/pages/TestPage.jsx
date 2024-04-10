@@ -13,7 +13,6 @@ function TestPage(params) {
     const { logoutFunction } = params;
 
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
     const [courseData, setCourseData] = useState({});
     const [activity, setActivity] = useState(null);
@@ -40,11 +39,17 @@ function TestPage(params) {
 
             const response_course = await getSpecificCourse(idCourse);
             setCourseData(response_course?.responseJSON?.data);
-
-            const hasSubmitted = await checkSubmission(username, activityID);
-            setIsSubmitted(hasSubmitted);
         })();
     }, []);
+
+    useEffect(() => {
+        (async () => {
+            if (username !== null) {
+                const hasSubmitted = await checkSubmission(username, activityID);
+                setIsSubmitted(hasSubmitted);
+            }
+        })();
+    }, [username]);
 
     useEffect(() => {
         if(activity) {
@@ -69,7 +74,9 @@ function TestPage(params) {
         } else {
             navigate(`/test/${activityID}/${currentQuestion}`);
         }
-    }
+    };
+
+    console.log(isSubmitted)
 
     return (
         <div className={'page-container'}>
