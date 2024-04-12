@@ -70,7 +70,7 @@ function App() {
                 <Route path={'/test/:id'} element={<TestPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id/:currentQuestion'} element={<QuestionPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id/end'} element={<ClosedTestPage logoutFunction={handleLogoutToken}/>}/>
-                <Route path={'/authenticate'} element={<Authenticate logoutFunction={handleLogoutToken}/>} />
+                <Route path={'test/:id/authenticate'} element={<Authenticate logoutFunction={handleLogoutToken}/>} />
             </Routes>
         </Router>
     );

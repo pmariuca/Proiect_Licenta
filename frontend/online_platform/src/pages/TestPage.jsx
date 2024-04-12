@@ -70,13 +70,11 @@ function TestPage(params) {
     const handleStartTest = () => {
         dispatch(testSlice.actions.setTestActive(true))
         if(activity?.access?.frc) {
-            navigate('/authenticate');
+            navigate(`/test/${activityID}/authenticate`);
         } else {
             navigate(`/test/${activityID}/${currentQuestion}`);
         }
     };
-
-    console.log(isSubmitted)
 
     return (
         <div className={'page-container'}>

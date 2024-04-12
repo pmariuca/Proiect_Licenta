@@ -12,24 +12,17 @@ firebase_credentials = credentials.Certificate('D:\\Learning\\Proiect_Licenta\\b
 application = firebase_admin.initialize_app(firebase_credentials, {
     'storageBucket': os.getenv('FIREBASE_BUCKET')
 })
-
 bucket = storage.bucket()
-blob = bucket.get_blob('popescusimona21@stud.ase.ro.jpeg')
-array = np.frombuffer(blob.download_as_string(), np.uint8)
-input_image = cv2.imdecode(array, cv2.IMREAD_COLOR)
 
-cap = cv2.VideoCapture(0)
 
-while True:
-    ret, frame = cap.read()
+def verify_identity(username, image):
+    blob = bucket.get_blob(username)
+    array = np.frombuffer(blob.download_as_string(), np.uint8)
+    input_image = cv2.imdecode(array, cv2.IMREAD_COLOR)
 
-    result = DeepFace.verify(img1_path=input_image, img2_path=frame, model_name='Facenet')
-    print(result)
+    filestr = image.read()
+    npimg = np.fromstring(filestr, np.uint8)
+    live_image = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
-    cv2.imshow('Webcam', frame)
-
-    if result:
-        break
-
-cap.release()
-cv2.destroyAllWindows()
+    result = DeepFace.verify(img1_path=input_image, img2_path=live_image, model_name='Facenet')
+    return result

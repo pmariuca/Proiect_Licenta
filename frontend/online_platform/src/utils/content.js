@@ -123,7 +123,11 @@ export const TEST_PAGE = {
     HUBSTAFF: 'Pentru acest test este necesară folosirea aplicației Hubstaff.',
     START_MSG: 'Pentru a începe testul, apasă butonul de mai jos.',
     START_BUTTON: 'Începe testul',
-    TEST_UNAVAILABLE: 'Testul nu este disponibil.'
+    TEST_UNAVAILABLE: 'Testul nu este disponibil.',
+    GDPR: 'Confirm că am citit și înțeles Politica de Confidențialitate și sunt de acord ca datele mele biometrice (imaginea facială) să fie colectate și procesate pentru scopul autentificării prin recunoaștere facială. De asemenea, sunt de acord ca în timpul utilizării platformei să fie luate capturi de ecran pentru monitorizarea integrității testărilor și confirm că am fost informat(ă) despre drepturile mele conform Regulamentului General pentru Protecția Datelor (GDPR).',
+    CHECK_BUTTON: 'Verifică identitatea',
+    GDPR_ALERT: 'Trebuie să bifați căsuța GDPR pentru a continua.',
+    TRY_AGAIN: 'Mai ai o încercare pentru a efectua recunoașterea facială. Asigură-te că lumina este bună.',
 }
 
 export const QUESTION_PAGE = {
