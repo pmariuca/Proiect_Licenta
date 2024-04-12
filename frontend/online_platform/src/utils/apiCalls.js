@@ -187,3 +187,21 @@ export async function checkSubmission(username, activityID) {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function checkIdentity(username, image) {
+    try {
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('image', image, 'image.jpeg');
+
+        const response = await fetch('http://127.0.0.1:5000/authenticate/verifyIdentity', {
+            method: 'POST',
+            body: formData
+        });
+
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
