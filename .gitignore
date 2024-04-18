@@ -8,3 +8,5 @@ backend-js/.env
 
 backend-py/.idea
 backend-py/.env
+
+monitor-app/MonitorApp/.vs
