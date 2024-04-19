@@ -1,9 +1,0 @@
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\bin\Debug\MonitorApp.exe.config
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\bin\Debug\MonitorApp.exe
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\bin\Debug\MonitorApp.pdb
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\MonitorApp.csproj.AssemblyReference.cache
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\MonitorApp.Properties.Resources.resources
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\MonitorApp.csproj.GenerateResource.cache
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\MonitorApp.csproj.CoreCompileInputs.cache
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\MonitorApp.exe
-D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\MonitorApp.pdb
