@@ -1,0 +1,13 @@
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\MonitorAppBackend.exe.config
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\MonitorAppBackend.exe
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\MonitorAppBackend.pdb
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\MimeTypesMap.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\Newtonsoft.Json.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\SimpleHTTP.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\Newtonsoft.Json.xml
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\bin\Debug\SimpleHTTP.xml
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\obj\Debug\MonitorAppBackend.csproj.AssemblyReference.cache
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\obj\Debug\MonitorAppBackend.csproj.CoreCompileInputs.cache
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\obj\Debug\MonitorA.8DCB1A7E.Up2Date
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\obj\Debug\MonitorAppBackend.exe
+D:\Learning\Proiect_Licenta\monitor-app\MonitorAppBackend\obj\Debug\MonitorAppBackend.pdb
