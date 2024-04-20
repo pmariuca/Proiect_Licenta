@@ -2,7 +2,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {checkSubmission, getActivityDetials, getQuestions, getSpecificCourse} from "../utils/apiCalls";
+import {checkSubmission, getActivityDetials, getQuestions, getSpecificCourse, startMonitor} from "../utils/apiCalls";
 import {formatDate, populateTestSlice, verifyDate} from "../utils/functions";
 import {TEST_PAGE} from "../utils/content";
 import {useNavigate} from "react-router-dom";
@@ -68,11 +68,16 @@ function TestPage(params) {
     }, [activity]);
 
     const handleStartTest = () => {
-        dispatch(testSlice.actions.setTestActive(true))
+        dispatch(testSlice.actions.setTestActive(true));
         if(activity?.access?.frc) {
             navigate(`/test/${activityID}/authenticate`);
         } else {
             navigate(`/test/${activityID}/${currentQuestion}`);
+
+            (async () => {
+                const response = await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name, activityID);
+                console.log(response)
+            })();
         }
     };
 

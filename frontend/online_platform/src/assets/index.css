@@ -199,6 +199,7 @@
 }
 
 #fraud-alert {
+  display: none;
   opacity: 0;
 }
 

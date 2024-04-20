@@ -169,9 +169,14 @@ function QuestionPage(params) {
 
     const showAlert = () => {
         const alertElement = document.getElementById('fraud-alert');
+        alertElement.style.display = 'block';
         alertElement.style.opacity = '1';
-        alertElement.style.animation = 'fadeOut 20s ease forwards';
+        alertElement.style.animation = 'fadeOut 10s ease forwards';
         showedAlert = true;
+
+        alertElement.addEventListener('animationend', () => {
+           alertElement.style.display = 'none';
+        });
     }
 
     return (
