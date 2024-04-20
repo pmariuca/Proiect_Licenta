@@ -206,14 +206,14 @@ export async function checkIdentity(username, image) {
     }
 }
 
-export async function startMonitor(username, time, activity) {
+export async function startMonitor(username, time, activity, activityID) {
     try {
         const response = await fetch('http://localhost:8080/startMonitor', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, time, activity}),
+            body: JSON.stringify({username, time, activity, activityID}),
         });
 
         const responseJSON = await response.json();

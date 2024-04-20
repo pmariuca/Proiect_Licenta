@@ -13,6 +13,7 @@ namespace MonitorAppBackend
         public string username { get; set; }
         public string time { get; set; }
         public string activity { get; set; }
+        public string activityID { get; set; }
 
         public void modifyTime()
         {
@@ -21,7 +22,7 @@ namespace MonitorAppBackend
 
         public override string ToString()
         {
-            return $"Username: {username}, Time: {time}, Activity: {activity}";
+            return $"Username: {username}, Time: {time}, Activity: {activity}, Code: {activityID}";
         }
     }
 }

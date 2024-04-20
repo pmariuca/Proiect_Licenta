@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using SimpleHttp;
 using System.Windows.Forms;
 using System.Text.Json;
 using System.IO;
 using System.Net;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.Storage.V1;
 
 namespace MonitorAppBackend
 {
@@ -16,6 +15,16 @@ namespace MonitorAppBackend
     {
         static void Main(string[] args)
         {
+            StorageClient storageClient = null;
+
+            string jsonPath = @"D:\Learning\Proiect_Licenta\monitor-app\screenshots-d1cba-firebase-adminsdk-n49a5-829e49782c.json";
+            using (var jsonKeyStream = new FileStream(jsonPath, FileMode.Open, FileAccess.Read))
+            {
+                var credential = GoogleCredential.FromStream(jsonKeyStream);
+
+                storageClient = StorageClient.Create(credential);
+            }
+
             HttpListener listener = new HttpListener();
             listener.Prefixes.Add("http://localhost:8080/");
             listener.Start();
@@ -59,7 +68,7 @@ namespace MonitorAppBackend
 
                     Task.Run(() =>
                     {
-                        Application.Run(new Interfata(data));
+                        Application.Run(new Interfata(data, storageClient));
                     });
 
 

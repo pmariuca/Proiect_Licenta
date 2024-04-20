@@ -75,7 +75,7 @@ function TestPage(params) {
             navigate(`/test/${activityID}/${currentQuestion}`);
 
             (async () => {
-                const response = await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name);
+                const response = await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name, activityID);
                 console.log(response)
             })();
         }
