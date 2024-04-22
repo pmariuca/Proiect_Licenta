@@ -13,15 +13,21 @@ using System.Windows.Forms;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using System.Management;
+using System.Diagnostics;
+using System.Collections;
 
 namespace MonitorAppBackend
 {
     public partial class Interfata : Form
     {
-        StorageClient storage;
-        MonitorRequest monitorRequest;
+        private StorageClient storage;
+        private MonitorRequest monitorRequest;
+        private ManagementEventWatcher watcher;
 
+        private List<string> openedProcesses = new List<string>();
         public bool timeStarted = true;
+
         public Interfata(MonitorRequest data, StorageClient storage)
         {
             InitializeComponent();
@@ -31,9 +37,10 @@ namespace MonitorAppBackend
             this.title.Text = data.activity;
             showTimer(data.time);
             takeScreenshot();
+            StartMonitoring();
         }
 
-        public void showTimer(string seconds)
+        private void showTimer(string seconds)
         {
             int secondsNr = int.Parse(seconds);
 
@@ -60,9 +67,8 @@ namespace MonitorAppBackend
             timer.Start();
         }
 
-        public void takeScreenshot()
+        private void takeScreenshot()
         {
-            Console.WriteLine("in screenshot");
             int interval = int.Parse(monitorRequest.time) < 100 ? int.Parse(monitorRequest.time) / 10 : int.Parse(monitorRequest.time) / 15;
             int totalSeconds = int.Parse(monitorRequest.time);
             var bucketName = "screenshots-d1cba.appspot.com";
@@ -74,7 +80,6 @@ namespace MonitorAppBackend
 
             timer.Tick += (sender, e) => {
                 totalSeconds -= interval;
-                Console.WriteLine(totalSeconds);
 
                 if (totalSeconds >= 0)
                 {
@@ -91,14 +96,12 @@ namespace MonitorAppBackend
                                                          CopyPixelOperation.SourceCopy);
                         }
 
-                        // Salvarea capturii de ecran într-un MemoryStream
                         using (var stream = new MemoryStream())
                         {
                             screenshot.Save(stream, ImageFormat.Png);
                             stream.Position = 0;
 
                             var objectName = $"{monitorRequest.activityID}/{monitorRequest.username}/{nr}.png";
-                            Console.WriteLine(objectName);
                             storage.UploadObject(bucketName, objectName, null, stream);
 
                             nr++;
@@ -114,9 +117,88 @@ namespace MonitorAppBackend
             timer.Start();
         }
 
+        public void StartMonitoring()
+        {
+            Task.Run(() => GetExistingProcesses());
+
+            string queryString = "SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_Process'";
+
+            watcher = new ManagementEventWatcher(new WqlEventQuery(queryString));
+            watcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
+
+            watcher.Start();
+        }
+
+        private void GetExistingProcesses()
+        {
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_Process");
+
+            foreach (ManagementObject obj in searcher.Get())
+            {
+                string processName = obj["Name"].ToString();
+                string processId = obj["ProcessId"].ToString();
+                ManagementObject process = new ManagementObject($"Win32_Process.Handle='{processId}'");
+
+                ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
+                if (outParams != null && outParams["User"] != null)
+                {
+                    string user = (string)outParams["User"];
+                    if (user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!openedProcesses.Contains(processName))
+                        {
+                            openedProcesses.Add(processName);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void HandleEvent(object sender, EventArrivedEventArgs e)
+        {
+            ManagementBaseObject newEvent = e.NewEvent["TargetInstance"] as ManagementBaseObject;
+            if (newEvent != null)
+            {
+
+                string processId = newEvent["ProcessId"].ToString();
+                string processPath = $"Win32_Process.Handle='{processId}'";
+                ManagementObject process = new ManagementObject(processPath);
+
+                ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
+                if (outParams != null)
+                {
+                    string user = (string)outParams["User"];
+                    string domain = (string)outParams["Domain"];
+
+                    if (user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (!openedProcesses.Contains((string)newEvent["Name"]))
+                        {
+                            openedProcesses.Add((string)newEvent["Name"]);
+                        }
+                    }
+                }
+            }
+        }
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             Close();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+            foreach(string s in openedProcesses)
+            {
+                Console.WriteLine(s);
+            }
+            if (watcher != null)
+            {
+                watcher.Stop();
+                watcher.Dispose();
+            }
         }
     }
 }
