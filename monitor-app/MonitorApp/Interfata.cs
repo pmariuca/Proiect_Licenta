@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using FirebaseAdmin;
-using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
 using System.Management;
 using System.Diagnostics;
-using System.Collections;
+using System.Windows.Automation;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MonitorAppBackend
 {
@@ -25,8 +21,35 @@ namespace MonitorAppBackend
         private MonitorRequest monitorRequest;
         private ManagementEventWatcher watcher;
 
-        private List<string> openedProcesses = new List<string>();
+        private System.Threading.Timer timer;
         public bool timeStarted = true;
+
+        private List<string> openedProcesses = new List<string>();
+        private List<string> openedTabs = new List<string>();
+        private List<string> openedFiles = new List<string>();
+
+        private HashSet<string> monitoredExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".doc", ".docx", ".pdf", ".txt", ".rtf",
+            ".xls", ".xlsx", ".ppt", ".pptx",
+            ".odt", ".ods", ".odp",
+            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".tiff",
+            ".mp3", ".wav", ".mp4", ".avi", ".mov", ".wmv",
+            ".js", ".html", ".htm", ".css", ".py", ".java", ".c", ".cpp", ".cs", ".sh",
+            ".zip", ".rar", ".7z", ".iso", ".dll", ".exe"
+        };
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool EnumWindows(EnumWindowsProc enumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool IsWindowVisible(IntPtr hWnd);
+
+        delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         public Interfata(MonitorRequest data, StorageClient storage)
         {
@@ -34,17 +57,103 @@ namespace MonitorAppBackend
             this.monitorRequest = data;
             this.storage = storage;
 
-            this.title.Text = data.activity;
+            this.label1.Text = data.activity;
             showTimer(data.time);
+
             takeScreenshot();
             StartMonitoring();
+        }
+
+        bool EnumTheWindows(IntPtr hWnd, IntPtr lParam)
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+
+            if (IsWindowVisible(hWnd))
+            {
+                if (GetWindowText(hWnd, Buff, nChars) > 0)
+                {
+                    string title = Buff.ToString();
+                    Console.WriteLine($"Window Handle: {hWnd}, Title: {Buff}");
+
+                    if(title.Contains("Edge") || title.Contains("Google"))
+                    {
+                        if(!openedTabs.Contains(title))
+                        {
+                            openedTabs.Add(title);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var extension in monitoredExtensions)
+                        {
+                            if (title.Contains(extension))
+                            {
+                                if (!openedFiles.Contains(title))
+                                {
+                                    openedFiles.Add(title);
+                                    Console.WriteLine("Monitored file type detected: " + title);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+
+        private void EnumTheWindowsCallback(object state)
+        {
+            EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
+            EnumWindows(enumProc, IntPtr.Zero);
+
+            EnumIDEWindows();
+        }
+
+        private void EnumIDEWindows()
+        {
+            Process[] procsVisual = Process.GetProcessesByName("devenv");
+            if (procsVisual.Length <= 0)
+            {
+                Console.WriteLine("Visual Studio is not running.");
+            }
+            else
+            {
+                foreach (Process proc in procsVisual)
+                {
+                    if (proc.MainWindowHandle != IntPtr.Zero)
+                    {
+                        AutomationElement root = AutomationElement.FromHandle(proc.MainWindowHandle);
+                        TreeWalker treewalker = TreeWalker.ControlViewWalker;
+                        AutomationElement rootParent = treewalker.GetParent(root);
+                        Condition condWindow = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window);
+                        AutomationElementCollection edges = rootParent.FindAll(TreeScope.Children, condWindow);
+                        Condition condNewTab = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem);
+                        foreach (AutomationElement e in edges)
+                        {
+
+                            foreach (AutomationElement tabitem in e.FindAll(TreeScope.Descendants, condNewTab))
+                            {
+                                string title = tabitem.Current.Name;
+                                if(title.Contains(".") && !openedFiles.Contains(title))
+                                {
+                                    openedFiles.Add(title);
+                                } 
+                                Console.WriteLine("TABNAME: " + tabitem.Current.Name);
+                            }
+
+                        }
+                    }
+                }
+            }
         }
 
         private void showTimer(string seconds)
         {
             int secondsNr = int.Parse(seconds);
 
-            Timer timer = new Timer();
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
 
             timer.Tick += (sender, e) =>
@@ -55,7 +164,14 @@ namespace MonitorAppBackend
                     int minutes = secondsNr / 60;
                     int totalSeconds = secondsNr % 60;
 
-                    timeLeft.Text = $"Timp rămas: {minutes}:{totalSeconds}";
+                    if(totalSeconds < 10)
+                    {
+                        timeLeft.Text = $"Timp rămas: {minutes}:0{totalSeconds}";
+                    }
+                    else
+                    {
+                        timeLeft.Text = $"Timp rămas: {minutes}:{totalSeconds}";
+                    }
                 }
                 else
                 {
@@ -75,7 +191,7 @@ namespace MonitorAppBackend
 
             int nr = 1;
 
-            Timer timer = new Timer();
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = interval * 1000;
 
             timer.Tick += (sender, e) => {
@@ -127,6 +243,12 @@ namespace MonitorAppBackend
             watcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
 
             watcher.Start();
+
+            EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
+            EnumWindows(enumProc, IntPtr.Zero);
+
+            TimerCallback callback = new TimerCallback(EnumTheWindowsCallback);
+            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(15));
         }
 
         private void GetExistingProcesses()
@@ -190,14 +312,30 @@ namespace MonitorAppBackend
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
-            foreach(string s in openedProcesses)
+
+            if (timer != null)
+            {
+                timer.Change(Timeout.Infinite, Timeout.Infinite);
+                timer.Dispose();
+            }
+
+            watcher?.Stop();
+            watcher?.Dispose();
+
+            foreach (string s in openedProcesses)
             {
                 Console.WriteLine(s);
             }
-            if (watcher != null)
+
+            Console.WriteLine("opened tabs");
+            foreach (string s in openedTabs)
             {
-                watcher.Stop();
-                watcher.Dispose();
+                Console.WriteLine(s);
+            }
+            Console.WriteLine("opened files");
+            foreach (string s in openedFiles)
+            {
+                Console.WriteLine(s);
             }
         }
     }

@@ -74,3 +74,10 @@ D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\bin\Debug\Google.Cloud.Storag
 D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\bin\Debug\Microsoft.Extensions.DependencyInjection.Abstractions.xml
 D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\bin\Debug\System.CodeDom.xml
 D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\bin\Debug\System.Collections.Immutable.xml
+D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\Interop.UIA.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\Interop.UIAutomationBlockingCoreLib.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\Interop.UIAutomationClient.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\Interop.UIAutomationClientPriv.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\Interop.UIAutomationCorePriv.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\Interop.UIAutomationCrossBitnessHookLib.dll
+D:\Learning\Proiect_Licenta\monitor-app\MonitorApp\obj\Debug\MonitorAppBackend.csproj.ResolveComReference.cache
