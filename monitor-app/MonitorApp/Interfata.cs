@@ -54,7 +54,7 @@ namespace MonitorAppBackend
 
             // Configurați temporizatorul separat pentru a apela EnumTheWindows la fiecare 5 secunde
             TimerCallback callback = new TimerCallback(EnumTheWindowsCallback);
-            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(15));
         }
 
         static bool EnumTheWindows(IntPtr hWnd, IntPtr lParam)
@@ -74,8 +74,46 @@ namespace MonitorAppBackend
 
         private void EnumTheWindowsCallback(object state)
         {
+            // Enumeră ferestrele existente
             EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
             EnumWindows(enumProc, IntPtr.Zero);
+
+            // Adaugă apelul către noua funcție pentru enumerarea ferestrelor Visual Studio
+            EnumIDEWindows(); // Aceasta este noua funcție adăugată
+        }
+
+        private void EnumIDEWindows()
+        {
+            Process[] procsEdge = Process.GetProcessesByName("devenv");
+            if (procsEdge.Length <= 0)
+            {
+                Console.WriteLine("Edge is not running");
+            }
+            else
+            {
+                foreach (Process proc in procsEdge)
+                {
+                    //the Edge process must have a window
+                    if (proc.MainWindowHandle != IntPtr.Zero)
+                    {
+                        AutomationElement root = AutomationElement.FromHandle(proc.MainWindowHandle);
+                        TreeWalker treewalker = TreeWalker.ControlViewWalker;
+                        AutomationElement rootParent = treewalker.GetParent(root);
+                        Condition condWindow = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Window);
+                        AutomationElementCollection edges = rootParent.FindAll(TreeScope.Children, condWindow);
+                        Condition condNewTab = new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.TabItem);
+                        foreach (AutomationElement e in edges)
+                        {
+
+                            foreach (AutomationElement tabitem in e.FindAll(TreeScope.Descendants, condNewTab))
+                            {
+                                Console.WriteLine("TABNAME: " + tabitem.Current.Name);
+                            }
+
+                        }
+                    }
+                }
+            }
         }
 
         private void showTimer(string seconds)
@@ -228,14 +266,19 @@ namespace MonitorAppBackend
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
-            foreach(string s in openedProcesses)
+
+            if (timer != null)
+            {
+                timer.Change(Timeout.Infinite, Timeout.Infinite);
+                timer.Dispose();
+            }
+
+            watcher?.Stop();
+            watcher?.Dispose();
+
+            foreach (string s in openedProcesses)
             {
                 Console.WriteLine(s);
-            }
-            if (watcher != null)
-            {
-                watcher.Stop();
-                watcher.Dispose();
             }
         }
     }
