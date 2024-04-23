@@ -22,9 +22,22 @@ namespace MonitorAppBackend
         private ManagementEventWatcher watcher;
 
         private System.Threading.Timer timer;
+        public bool timeStarted = true;
 
         private List<string> openedProcesses = new List<string>();
-        public bool timeStarted = true;
+        private List<string> openedTabs = new List<string>();
+        private List<string> openedFiles = new List<string>();
+
+        private HashSet<string> monitoredExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".doc", ".docx", ".pdf", ".txt", ".rtf",
+            ".xls", ".xlsx", ".ppt", ".pptx",
+            ".odt", ".ods", ".odp",
+            ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".tiff",
+            ".mp3", ".wav", ".mp4", ".avi", ".mov", ".wmv",
+            ".js", ".html", ".htm", ".css", ".py", ".java", ".c", ".cpp", ".cs", ".sh",
+            ".zip", ".rar", ".7z", ".iso", ".dll", ".exe"
+        };
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
@@ -44,20 +57,14 @@ namespace MonitorAppBackend
             this.monitorRequest = data;
             this.storage = storage;
 
-            this.title.Text = data.activity;
+            this.label1.Text = data.activity;
             showTimer(data.time);
+
             takeScreenshot();
             StartMonitoring();
-
-            EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
-            EnumWindows(enumProc, IntPtr.Zero);
-
-            // Configurați temporizatorul separat pentru a apela EnumTheWindows la fiecare 5 secunde
-            TimerCallback callback = new TimerCallback(EnumTheWindowsCallback);
-            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(15));
         }
 
-        static bool EnumTheWindows(IntPtr hWnd, IntPtr lParam)
+        bool EnumTheWindows(IntPtr hWnd, IntPtr lParam)
         {
             const int nChars = 256;
             StringBuilder Buff = new StringBuilder(nChars);
@@ -66,34 +73,55 @@ namespace MonitorAppBackend
             {
                 if (GetWindowText(hWnd, Buff, nChars) > 0)
                 {
+                    string title = Buff.ToString();
                     Console.WriteLine($"Window Handle: {hWnd}, Title: {Buff}");
+
+                    if(title.Contains("Edge") || title.Contains("Google"))
+                    {
+                        if(!openedTabs.Contains(title))
+                        {
+                            openedTabs.Add(title);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var extension in monitoredExtensions)
+                        {
+                            if (title.Contains(extension))
+                            {
+                                if (!openedFiles.Contains(title))
+                                {
+                                    openedFiles.Add(title);
+                                    Console.WriteLine("Monitored file type detected: " + title);
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
             }
-            return true; // Indică să continue enumerarea
+            return true;
         }
 
         private void EnumTheWindowsCallback(object state)
         {
-            // Enumeră ferestrele existente
             EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
             EnumWindows(enumProc, IntPtr.Zero);
 
-            // Adaugă apelul către noua funcție pentru enumerarea ferestrelor Visual Studio
-            EnumIDEWindows(); // Aceasta este noua funcție adăugată
+            EnumIDEWindows();
         }
 
         private void EnumIDEWindows()
         {
-            Process[] procsEdge = Process.GetProcessesByName("devenv");
-            if (procsEdge.Length <= 0)
+            Process[] procsVisual = Process.GetProcessesByName("devenv");
+            if (procsVisual.Length <= 0)
             {
-                Console.WriteLine("Edge is not running");
+                Console.WriteLine("Visual Studio is not running.");
             }
             else
             {
-                foreach (Process proc in procsEdge)
+                foreach (Process proc in procsVisual)
                 {
-                    //the Edge process must have a window
                     if (proc.MainWindowHandle != IntPtr.Zero)
                     {
                         AutomationElement root = AutomationElement.FromHandle(proc.MainWindowHandle);
@@ -107,6 +135,11 @@ namespace MonitorAppBackend
 
                             foreach (AutomationElement tabitem in e.FindAll(TreeScope.Descendants, condNewTab))
                             {
+                                string title = tabitem.Current.Name;
+                                if(title.Contains(".") && !openedFiles.Contains(title))
+                                {
+                                    openedFiles.Add(title);
+                                } 
                                 Console.WriteLine("TABNAME: " + tabitem.Current.Name);
                             }
 
@@ -131,7 +164,14 @@ namespace MonitorAppBackend
                     int minutes = secondsNr / 60;
                     int totalSeconds = secondsNr % 60;
 
-                    timeLeft.Text = $"Timp rămas: {minutes}:{totalSeconds}";
+                    if(totalSeconds < 10)
+                    {
+                        timeLeft.Text = $"Timp rămas: {minutes}:0{totalSeconds}";
+                    }
+                    else
+                    {
+                        timeLeft.Text = $"Timp rămas: {minutes}:{totalSeconds}";
+                    }
                 }
                 else
                 {
@@ -203,6 +243,12 @@ namespace MonitorAppBackend
             watcher.EventArrived += new EventArrivedEventHandler(HandleEvent);
 
             watcher.Start();
+
+            EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
+            EnumWindows(enumProc, IntPtr.Zero);
+
+            TimerCallback callback = new TimerCallback(EnumTheWindowsCallback);
+            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(15));
         }
 
         private void GetExistingProcesses()
@@ -277,6 +323,17 @@ namespace MonitorAppBackend
             watcher?.Dispose();
 
             foreach (string s in openedProcesses)
+            {
+                Console.WriteLine(s);
+            }
+
+            Console.WriteLine("opened tabs");
+            foreach (string s in openedTabs)
+            {
+                Console.WriteLine(s);
+            }
+            Console.WriteLine("opened files");
+            foreach (string s in openedFiles)
             {
                 Console.WriteLine(s);
             }
