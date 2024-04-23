@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Google.Cloud.Storage.V1;
 using System.Management;
+using System.Diagnostics;
+using System.Windows.Automation;
+using System.Text;
+using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace MonitorAppBackend
 {
@@ -16,8 +21,22 @@ namespace MonitorAppBackend
         private MonitorRequest monitorRequest;
         private ManagementEventWatcher watcher;
 
+        private System.Threading.Timer timer;
+
         private List<string> openedProcesses = new List<string>();
         public bool timeStarted = true;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern bool EnumWindows(EnumWindowsProc enumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool IsWindowVisible(IntPtr hWnd);
+
+        delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         public Interfata(MonitorRequest data, StorageClient storage)
         {
@@ -29,13 +48,41 @@ namespace MonitorAppBackend
             showTimer(data.time);
             takeScreenshot();
             StartMonitoring();
+
+            EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
+            EnumWindows(enumProc, IntPtr.Zero);
+
+            // Configurați temporizatorul separat pentru a apela EnumTheWindows la fiecare 5 secunde
+            TimerCallback callback = new TimerCallback(EnumTheWindowsCallback);
+            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+        }
+
+        static bool EnumTheWindows(IntPtr hWnd, IntPtr lParam)
+        {
+            const int nChars = 256;
+            StringBuilder Buff = new StringBuilder(nChars);
+
+            if (IsWindowVisible(hWnd))
+            {
+                if (GetWindowText(hWnd, Buff, nChars) > 0)
+                {
+                    Console.WriteLine($"Window Handle: {hWnd}, Title: {Buff}");
+                }
+            }
+            return true; // Indică să continue enumerarea
+        }
+
+        private void EnumTheWindowsCallback(object state)
+        {
+            EnumWindowsProc enumProc = new EnumWindowsProc(EnumTheWindows);
+            EnumWindows(enumProc, IntPtr.Zero);
         }
 
         private void showTimer(string seconds)
         {
             int secondsNr = int.Parse(seconds);
 
-            Timer timer = new Timer();
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
 
             timer.Tick += (sender, e) =>
@@ -66,7 +113,7 @@ namespace MonitorAppBackend
 
             int nr = 1;
 
-            Timer timer = new Timer();
+            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = interval * 1000;
 
             timer.Tick += (sender, e) => {
