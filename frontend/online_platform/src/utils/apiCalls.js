@@ -217,8 +217,23 @@ export async function startMonitor(username, time, activity, activityID) {
         });
 
         const responseJSON = await response.json();
-        console.log(responseJSON);
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
 
+export async function closeMonitorApp() {
+    try {
+        const response = await fetch('http://localhost:8080/stopMonitor', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify('Stop the app.'),
+        });
+
+        const responseJSON = await response.json();
         return {responseJSON, status: response.status};
     } catch (error) {
         console.log('There has been an error processing the request: ', error);

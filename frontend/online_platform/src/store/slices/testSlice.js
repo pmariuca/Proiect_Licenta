@@ -21,8 +21,9 @@ export const testSlice = createSlice({
         setCurrentQuestion: (state, action) => {
             state.currentQuestion = action.payload;
         },
-        setAnswer: (state, action) => {
+        setAnswers: (state, action) => {
             if (state.answers && state.currentQuestion != null) {
+                console.log(state.answers, state.currentQuestion);
                 state.answers[state.currentQuestion] = action.payload;
             }
         },

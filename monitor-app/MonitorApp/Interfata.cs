@@ -12,6 +12,8 @@ using System.Windows.Automation;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace MonitorAppBackend
 {
@@ -20,6 +22,8 @@ namespace MonitorAppBackend
         private StorageClient storage;
         private MonitorRequest monitorRequest;
         private ManagementEventWatcher watcher;
+
+        private static readonly HttpClient client = new HttpClient();
 
         private System.Threading.Timer timer;
         public bool timeStarted = true;
@@ -304,9 +308,32 @@ namespace MonitorAppBackend
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
+        private async void button1_Click(object sender, EventArgs e)
         {
+            await StopTestAsync();
             Close();
+        }
+
+        private async Task StopTestAsync()
+        {
+            try
+            {
+                var payload = JsonSerializer.Serialize(new { message = "Stop test." });
+                var content = new StringContent(payload, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("http://localhost:3001/questions/stopTest", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Test stopped successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to stop the test.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in sending stop test request: " + ex.Message);
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

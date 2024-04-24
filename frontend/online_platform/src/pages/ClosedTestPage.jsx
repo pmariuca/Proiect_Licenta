@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import {useSelector} from "react-redux";
 import {COURSE_PAGE, NAVBAR, QUESTION_PAGE, TEST_PAGE} from "../utils/content";
 import {useEffect, useState} from "react";
-import {getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
+import {closeMonitorApp, getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
 import {useNavigate} from "react-router-dom";
 import ActivityTitle from "../components/ActivityTitle";
 
@@ -29,6 +29,8 @@ function ClosedTestPage(params) {
 
             const response_course = await getSpecificCourse(idCourse);
             setCourseData(response_course?.responseJSON?.data);
+
+            await closeMonitorApp();
         })();
     }, []);
 

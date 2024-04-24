@@ -8,12 +8,14 @@ import {useNavigate} from "react-router-dom";
 import {getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
 import {finishTest} from "../store/thunks/finishTestThunk";
 import ActivityTitle from "../components/ActivityTitle";
+import { io } from 'socket.io-client';
 
 let submitPerformed = false;
 let showedAlert = false;
 
 function QuestionPage(params) {
     const { logoutFunction } = params || {};
+    const socket = io('http://localhost:3001');
 
     const [courseData, setCourseData] = useState({});
     const [activity, setActivity] = useState(null);
@@ -41,6 +43,18 @@ function QuestionPage(params) {
     const answers = useSelector(state => state.test.answers);
 
     useEffect(() => {
+        const handleTestStopped = async () => {
+            await submitResults();
+        };
+
+        socket.on('testStopped', handleTestStopped);
+
+        return () => {
+            socket.off('testStopped', handleTestStopped);
+        };
+    }, [answers]);
+
+    useEffect(() => {
         (async () => {
             const response = await getActivityDetials(activityID);
             setActivity(response?.responseJSON);
@@ -57,11 +71,6 @@ function QuestionPage(params) {
     }, [activityID, idCourse]);
 
     useEffect(() => {
-        const submitResults = async () => {
-            await dispatch(finishTest({username, activityID, answers: [...answers, selectedAnswer]}));
-            await dispatch(testSlice.actions.setTestActive(false));
-            navigate(`/test/${activityID}/end`);
-        };
         if(timeLeft === 0 && !submitPerformed) {
             submitPerformed = true;
             submitResults();
@@ -126,6 +135,11 @@ function QuestionPage(params) {
         };
     }, [isTestActive]);
 
+    const submitResults = async () => {
+        await dispatch(finishTest({username, activityID, answers: [...answers, selectedAnswer]}));
+        await dispatch(testSlice.actions.setTestActive(false));
+        navigate(`/test/${activityID}/end`);
+    };
     const formatTimeLeft = () => {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
@@ -133,7 +147,7 @@ function QuestionPage(params) {
     };
 
     const handleClick = () => {
-        dispatch(testSlice.actions.setAnswer(selectedAnswer));
+        dispatch(testSlice.actions.setAnswers(selectedAnswer));
         dispatch(testSlice.actions.setCurrentQuestion(currentQuestion + 1));
 
         if(currentQuestion + 1 === noOfQuestions) {
