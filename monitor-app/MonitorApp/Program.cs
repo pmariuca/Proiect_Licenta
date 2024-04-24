@@ -8,6 +8,8 @@ using System.Net;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Google.Cloud.Storage.V1;
+using System.Linq;
+using System.Management;
 
 namespace MonitorAppBackend
 {
@@ -72,7 +74,44 @@ namespace MonitorAppBackend
                     });
 
 
-                    byte[] buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { message = "Monitor started" }));
+                    byte[] buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { message = "Monitor started." }));
+                    response.ContentLength64 = buffer.Length;
+                    response.ContentType = "application/json";
+                    using (var responseOutput = response.OutputStream)
+                    {
+                        responseOutput.Write(buffer, 0, buffer.Length);
+                    }
+                }
+
+                if (request.Url.AbsolutePath == "/stopMonitor" && request.HttpMethod == "POST")
+                {
+                    string requestBody;
+                    using (var reader = new StreamReader(request.InputStream, request.ContentEncoding))
+                    {
+                        requestBody = reader.ReadToEnd();
+                    }
+
+                    var formToClose = Application.OpenForms.OfType<Interfata>().FirstOrDefault();
+                    Task.Run(() =>
+                    {
+                        if (formToClose != null)
+                        {
+                            if (formToClose.InvokeRequired)
+                            {
+                                formToClose.Invoke((MethodInvoker)delegate
+                                {
+                                    formToClose.Close();
+                                });
+                            }
+                            else
+                            {
+                                formToClose.Close();
+                            }
+                        }
+                    });
+
+
+                    byte[] buffer = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { message = "Monitor stopped." }));
                     response.ContentLength64 = buffer.Length;
                     response.ContentType = "application/json";
                     using (var responseOutput = response.OutputStream)
