@@ -60,7 +60,7 @@ function Homepage(params) {
                         {
                             Object.entries(courses).map(([key, value]) => {
                                 return (
-                                    <CourseContainer course={value} />
+                                    <CourseContainer key={key} course={value} />
                                 )
                             })
                         }

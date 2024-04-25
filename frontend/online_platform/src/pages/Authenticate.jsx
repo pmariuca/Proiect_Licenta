@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ActivityTitle from "../components/ActivityTitle";
 import {useEffect, useRef, useState} from "react";
-import {checkIdentity, getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
+import {checkIdentity, getActivityDetials, getSpecificCourse, startMonitor} from "../utils/apiCalls";
 import {TEST_PAGE} from "../utils/content";
 import {useNavigate} from "react-router-dom";
 
@@ -16,6 +16,7 @@ function Authenticate(params) {
     const canvasRef = useRef(null);
     const [checkedGDPR, setCheckedGDPR] = useState(false);
     const [image, setImage] = useState(null);
+    const [videoStream, setVideoStream] = useState(null);
 
     const [courseData, setCourseData] = useState({});
     const [activity, setActivity] = useState(null);
@@ -43,14 +44,25 @@ function Authenticate(params) {
 
         async function getVideo() {
             try {
-                const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                if (videoRef.current) videoRef.current.srcObject = videoStream;
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                setVideoStream(stream);
+
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
+                }
             } catch (err) {
                 console.error("Error accessing the camera", err);
             }
         }
 
         getVideo();
+
+        return () => {
+            if (videoStream) {
+                console.log('stop unmount')
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+        };
     }, []);
 
     const captureImage = () => {
@@ -77,7 +89,17 @@ function Authenticate(params) {
                     const response = await checkIdentity(username, image);
 
                     if(response?.responseJSON?.verified === true) {
+                        if (videoStream) {
+                            console.log('stop buton')
+                            videoStream.getTracks().forEach(track => track.stop());
+                        }
+
                         navigate(`/test/${activityID}/${currentQuestion}`);
+                        if(activity?.access?.hub) {
+                            await (async () => {
+                                const response = await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name, activityID);
+                            })();
+                        }
                     } else {
                         timesChecked++;
                         if(timesChecked === 1 && Number(response?.responseJSON?.distance) <= 0.45) {

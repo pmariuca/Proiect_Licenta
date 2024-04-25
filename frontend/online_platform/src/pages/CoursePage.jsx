@@ -105,7 +105,7 @@ function CoursePage(params) {
                         </li>
                         {weeks?.map((week, index) => {
                             return (
-                                <WeekContainer index={index} week={week} course={idCourse.slice(1)} type={idCourse[0].toUpperCase()} />
+                                <WeekContainer key={index} index={index} week={week} course={idCourse.slice(1)} type={idCourse[0].toUpperCase()} />
                             )
                         })}
                     </ul>

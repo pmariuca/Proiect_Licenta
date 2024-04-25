@@ -73,11 +73,11 @@ function TestPage(params) {
             navigate(`/test/${activityID}/authenticate`);
         } else {
             navigate(`/test/${activityID}/${currentQuestion}`);
-
-            (async () => {
-                const response = await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name, activityID);
-                console.log(response)
-            })();
+            if(activity?.access?.hub) {
+                (async () => {
+                    const response = await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name, activityID);
+                })();
+            }
         }
     };
 
