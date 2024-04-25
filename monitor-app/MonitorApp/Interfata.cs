@@ -62,9 +62,10 @@ namespace MonitorAppBackend
             this.storage = storage;
 
             this.label1.Text = data.activity;
-            showTimer(data.time);
+            ShowTimer(data.time);
 
-            takeScreenshot();
+            TakeScreenshot();
+            CollectExistingProcess();
             StartMonitoring();
         }
 
@@ -153,7 +154,7 @@ namespace MonitorAppBackend
             }
         }
 
-        private void showTimer(string seconds)
+        private void ShowTimer(string seconds)
         {
             int secondsNr = int.Parse(seconds);
 
@@ -187,7 +188,7 @@ namespace MonitorAppBackend
             timer.Start();
         }
 
-        private void takeScreenshot()
+        private void TakeScreenshot()
         {
             int interval = int.Parse(monitorRequest.time) < 100 ? int.Parse(monitorRequest.time) / 10 : int.Parse(monitorRequest.time) / 15;
             int totalSeconds = int.Parse(monitorRequest.time);
@@ -237,10 +238,13 @@ namespace MonitorAppBackend
             timer.Start();
         }
 
+        public async void CollectExistingProcess()
+        {
+            await Task.Run(() => GetExistingProcesses());
+        }
+
         public void StartMonitoring()
         {
-            Task.Run(() => GetExistingProcesses());
-
             string queryString = "SELECT * FROM __InstanceCreationEvent WITHIN 1 WHERE TargetInstance ISA 'Win32_Process'";
 
             watcher = new ManagementEventWatcher(new WqlEventQuery(queryString));
@@ -349,6 +353,7 @@ namespace MonitorAppBackend
             watcher?.Stop();
             watcher?.Dispose();
 
+            Console.WriteLine("opened processes");
             foreach (string s in openedProcesses)
             {
                 Console.WriteLine(s);
