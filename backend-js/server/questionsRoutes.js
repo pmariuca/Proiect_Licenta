@@ -58,4 +58,31 @@ router.post('/stopTest', async (req, res) => {
     }
 });
 
+router.post('/monitorData', async (req, res) => {
+    try {
+        const {username, activityID, OpenedProcesses, OpenedTabs, OpenedFiles } = req.body;
+
+        const examsDatabase = clientMongo.db('Exams');
+        const exams = examsDatabase.collection('Exams');
+
+        const result = await exams.updateOne(
+            {
+                "activityID": activityID,
+                "submits.username": username
+            },
+            {
+                $push: {
+                    "submits.$.OpenedProcesses": { $each: OpenedProcesses },
+                    "submits.$.OpenedTabs": { $each: OpenedTabs },
+                    "submits.$.OpenedFiles": { $each: OpenedFiles }
+                }
+            }
+        );
+
+        res.status(200).json({ message: 'Data received and added successfully.' });
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
 module.exports = router;

@@ -40,7 +40,7 @@ namespace MonitorAppBackend
             ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg", ".tiff",
             ".mp3", ".wav", ".mp4", ".avi", ".mov", ".wmv",
             ".js", ".html", ".htm", ".css", ".py", ".java", ".c", ".cpp", ".cs", ".sh",
-            ".zip", ".rar", ".7z", ".iso", ".dll", ".exe"
+            ".zip", ".rar", ".7z", ".iso", ".dll", ".exe", "- Excel"
         };
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -265,21 +265,42 @@ namespace MonitorAppBackend
 
             foreach (ManagementObject obj in searcher.Get())
             {
-                string processName = obj["Name"].ToString();
-                string processId = obj["ProcessId"].ToString();
-                ManagementObject process = new ManagementObject($"Win32_Process.Handle='{processId}'");
-
-                ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
-                if (outParams != null && outParams["User"] != null)
+                try
                 {
-                    string user = (string)outParams["User"];
-                    if (user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
+                    string processName = obj["Name"].ToString();
+                    string processId = obj["ProcessId"].ToString();
+                    ManagementObject process = new ManagementObject($"Win32_Process.Handle='{processId}'");
+
+                    try
                     {
-                        if (!openedProcesses.Contains(processName))
+                        ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
+                        if (outParams != null && outParams["User"] != null)
                         {
-                            openedProcesses.Add(processName);
+                            string user = (string)outParams["User"];
+                            if (user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (!openedProcesses.Contains(processName))
+                                {
+                                    openedProcesses.Add(processName);
+                                }
+                            }
                         }
                     }
+                    catch (ManagementException ex)
+                    {
+                        if (ex.ErrorCode == ManagementStatus.NotFound)
+                        {
+                            Console.WriteLine($"Process with ID {processId} no longer exists.");
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"An error occurred while processing process ID {obj["ProcessId"]}: {ex.Message}");
                 }
             }
         }
@@ -318,6 +339,37 @@ namespace MonitorAppBackend
             Close();
         }
 
+        private async Task SendDataAsync()
+        {
+            try
+            {
+                var payload = new
+                {
+                    username = monitorRequest.username,
+                    activityID = monitorRequest.activityID,
+                    OpenedProcesses = openedProcesses,
+                    OpenedTabs = openedTabs,
+                    OpenedFiles = openedFiles
+                };
+                string jsonPayload = JsonSerializer.Serialize(payload);
+
+                var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+                var response = await client.PostAsync("http://localhost:3001/questions/monitorData", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine("Data sent successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("Failed to send data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error in sending data: " + ex.Message);
+            }
+        }
+
         private async Task StopTestAsync()
         {
             try
@@ -340,7 +392,7 @@ namespace MonitorAppBackend
             }
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
+        protected override async void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
 
@@ -352,6 +404,8 @@ namespace MonitorAppBackend
 
             watcher?.Stop();
             watcher?.Dispose();
+
+            await SendDataAsync();
 
             Console.WriteLine("opened processes");
             foreach (string s in openedProcesses)
