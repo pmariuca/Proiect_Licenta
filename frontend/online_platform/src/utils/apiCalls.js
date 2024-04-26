@@ -239,3 +239,16 @@ export async function closeMonitorApp() {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function getNoOfSubmits(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getNoOfSubmits');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
