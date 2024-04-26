@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import {QUESTION_PAGE} from "../utils/content";
 import {useEffect, useMemo, useState} from "react";
 import {testSlice} from "../store/slices/testSlice";
-import {useNavigate} from "react-router-dom";
+import { useLocation, useNavigationType, useNavigate} from "react-router-dom";
 import {getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
 import {finishTest} from "../store/thunks/finishTestThunk";
 import ActivityTitle from "../components/ActivityTitle";
@@ -22,6 +22,8 @@ function QuestionPage(params) {
     const [selectedAnswer, setSelectedAnswer] = useState('');
 
     const dispatch = useDispatch();
+    const location = useLocation();
+    const navigationType = useNavigationType();
     const navigate = useNavigate();
 
     const username = useSelector(state => state.global.username);
@@ -148,6 +150,14 @@ function QuestionPage(params) {
         };
     }, [isTestActive]);
 
+    useEffect(() => {
+        if (navigationType === 'POP') {
+            dispatch(finishTest({username, activityID, answers: [], fraudAttempts: [copy, paste, cut, exitWindow]}));
+            dispatch(testSlice.actions.setTestActive(false));
+            navigate(`/test/${activityID}/end`);
+        }
+    }, [location, navigationType, navigate]);
+
     const submitResults = async () => {
         await dispatch(finishTest({username, activityID, answers: [...answers, selectedAnswer], fraudAttempts: [copy, paste, cut, exitWindow]}));
         await dispatch(testSlice.actions.setTestActive(false));
@@ -204,7 +214,7 @@ function QuestionPage(params) {
         alertElement.addEventListener('animationend', () => {
            alertElement.style.display = 'none';
         });
-    }
+    };
 
     return (
         <div className={'page-container'}>
