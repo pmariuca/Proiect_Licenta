@@ -1,5 +1,6 @@
 import {NAVBAR} from "../utils/content";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
+import React from "react";
 import HomeSVG from "./SVG/HomeSVG";
 import TachometerSVG from "./SVG/TachometerSVG";
 import FileSVG from "./SVG/FileSVG";
@@ -55,22 +56,22 @@ function MenuDrawer(params) {
                     Object.entries(courses).map(([key, value], index) => {
                         const name = value.name.split(' ')[0];
                         return (
-                            <>
+                            <React.Fragment key={`fragment-${key}-${index}`}>
                                 <li className={'menu-drawer-item'}
-                                    key={`course-${key}`}>
+                                    key={`course-${key}-${index}`}>
                                     <a href={'/'} className={'flex items-center'}>
                                         <CourseSVG classes={'mr-2'}/>
                                         {`${name}-C Sem${value.semester}`}
                                     </a>
                                 </li>
                                 <li className={'menu-drawer-item'}
-                                    key={`seminar-${key}`}>
+                                    key={`seminar-${key}-${index}`}>
                                     <a href={'/'} className={'flex items-center'}>
                                         <CourseSVG classes={'mr-2'}/>
                                         {`${name}-S Sem${value.semester}`}
                                     </a>
                                 </li>
-                            </>
+                            </React.Fragment>
                         )
                     })
                 }

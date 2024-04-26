@@ -23,7 +23,6 @@ export const testSlice = createSlice({
         },
         setAnswers: (state, action) => {
             if (state.answers && state.currentQuestion != null) {
-                console.log(state.answers, state.currentQuestion);
                 state.answers[state.currentQuestion] = action.payload;
             }
         },

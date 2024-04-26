@@ -1,7 +1,7 @@
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {useSelector} from "react-redux";
-import {COURSE_PAGE, NAVBAR, QUESTION_PAGE, TEST_PAGE} from "../utils/content";
+import {QUESTION_PAGE} from "../utils/content";
 import {useEffect, useState} from "react";
 import {closeMonitorApp, getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
 import {useNavigate} from "react-router-dom";

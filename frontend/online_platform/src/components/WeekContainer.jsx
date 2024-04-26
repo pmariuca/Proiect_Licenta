@@ -53,7 +53,7 @@ function WeekContainer(params) {
             <div className={'m-4'}>
                 {activities.map((activity, index) => {
                     return (
-                        <div className={activities.length > 1 && index !== activities.length-1 ? `pb-4 border-b-[0.063rem] border-solid border-[#00000020] ` : 'pt-4'}>
+                        <div key={index} className={activities.length > 1 && index !== activities.length-1 ? `pb-4 border-b-[0.063rem] border-solid border-[#00000020] ` : 'pt-4'}>
                             <a href={`/test/${activity?.activityID}`}
                                 className={'activity-container items-end pb-2'}>
                                 <TestSVG />
