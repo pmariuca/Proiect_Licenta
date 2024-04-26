@@ -26,13 +26,12 @@ router.get('/getQuestions', async (req, res) => {
 
 router.post('/submitAnswers', async (req, res) => {
     try {
-        const {username, activityID, answers} = req.body;
-        console.log(answers);
+        const {username, activityID, answers, fraudAttempts} = req.body;
 
         const examsDatabase = clientMongo.db('Exams');
         const exams = examsDatabase.collection('Exams');
 
-        const submission = { username, answers };
+        const submission = { username, answers, fraudAttempts };
         const updateResult = await exams.updateOne(
             { activityID: activityID },
             { $push: { submits: submission } }
@@ -61,6 +60,11 @@ router.post('/stopTest', async (req, res) => {
 router.post('/monitorData', async (req, res) => {
     try {
         const {username, activityID, OpenedProcesses, OpenedTabs, OpenedFiles } = req.body;
+        const monitorApp = {
+            'openedProcesses': OpenedProcesses,
+            'openedTabs': OpenedTabs,
+            'openedFiles': OpenedFiles
+        }
 
         const examsDatabase = clientMongo.db('Exams');
         const exams = examsDatabase.collection('Exams');
@@ -71,10 +75,8 @@ router.post('/monitorData', async (req, res) => {
                 "submits.username": username
             },
             {
-                $push: {
-                    "submits.$.OpenedProcesses": { $each: OpenedProcesses },
-                    "submits.$.OpenedTabs": { $each: OpenedTabs },
-                    "submits.$.OpenedFiles": { $each: OpenedFiles }
+                $set: {
+                    "submits.$.monitorApp": monitorApp
                 }
             }
         );

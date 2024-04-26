@@ -41,6 +41,10 @@ function QuestionPage(params) {
     const questions = useSelector(state => state.test.questions);
     const currentQuestion = useSelector(state => state.test.currentQuestion);
     const answers = useSelector(state => state.test.answers);
+    const copy = useSelector(state => state.test.copy);
+    const paste = useSelector(state => state.test.paste);
+    const cut = useSelector(state => state.test.cut);
+    const exitWindow = useSelector(state => state.test.exitWindow);
 
     useEffect(() => {
         const handleTestStopped = async () => {
@@ -85,6 +89,8 @@ function QuestionPage(params) {
         const handleKeyDown = (event) => {
             if(isTestActive && event.ctrlKey && event.key === 'c') {
                 event.preventDefault();
+                dispatch(testSlice.actions.setCopy());
+
                 if(!showedAlert) {
                     showAlert();
                 }
@@ -92,6 +98,8 @@ function QuestionPage(params) {
 
             if(isTestActive && event.ctrlKey && event.key === 'x') {
                 event.preventDefault();
+                dispatch(testSlice.actions.setCut());
+
                 if(!showedAlert) {
                     showAlert();
                 }
@@ -99,6 +107,8 @@ function QuestionPage(params) {
 
             if(isTestActive && event.ctrlKey && event.key === 'v') {
                 event.preventDefault();
+                dispatch(testSlice.actions.setPaste());
+
                 if(!showedAlert) {
                     showAlert();
                 }
@@ -108,6 +118,7 @@ function QuestionPage(params) {
         const blockRightClick = (event) => {
             if(isTestActive) {
                 event.preventDefault();
+
                 if(!showedAlert) {
                     showAlert();
                 }
@@ -117,6 +128,8 @@ function QuestionPage(params) {
         const verifyChangedApp = () => {
             if(isTestActive) {
                 if (document.visibilityState !== 'visible') {
+                    dispatch(testSlice.actions.setExitWindow());
+
                     if(!showedAlert) {
                         showAlert();
                     }
@@ -136,7 +149,7 @@ function QuestionPage(params) {
     }, [isTestActive]);
 
     const submitResults = async () => {
-        await dispatch(finishTest({username, activityID, answers: [...answers, selectedAnswer]}));
+        await dispatch(finishTest({username, activityID, answers: [...answers, selectedAnswer], fraudAttempts: [copy, paste, cut, exitWindow]}));
         await dispatch(testSlice.actions.setTestActive(false));
         navigate(`/test/${activityID}/end`);
     };
@@ -151,7 +164,7 @@ function QuestionPage(params) {
         dispatch(testSlice.actions.setCurrentQuestion(currentQuestion + 1));
 
         if(currentQuestion + 1 === noOfQuestions) {
-            dispatch(finishTest({ username, activityID, answers: [...answers, selectedAnswer] }));
+            dispatch(finishTest({ username, activityID, answers: [...answers, selectedAnswer], fraudAttempts: {'copy': copy, 'paste': paste, 'cut': cut, 'exitWindow': exitWindow} }));
             dispatch(testSlice.actions.setTestActive(false));
 
             navigate(`/test/${activityID}/end`);

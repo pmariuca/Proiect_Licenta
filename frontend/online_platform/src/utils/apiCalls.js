@@ -153,14 +153,14 @@ export async function getQuestions(numberOfQuestions) {
     }
 }
 
-export async function submitAnswers(username, activityID, answers) {
+export async function submitAnswers(username, activityID, answers, fraudAttempts) {
     try {
         const response = await fetch('http://localhost:3001/questions/submitAnswers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, activityID, answers}),
+            body: JSON.stringify({username, activityID, answers, fraudAttempts}),
         });
 
         const responseJSON = await response.json();

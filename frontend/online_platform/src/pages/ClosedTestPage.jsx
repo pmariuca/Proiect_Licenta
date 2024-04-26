@@ -30,7 +30,9 @@ function ClosedTestPage(params) {
             const response_course = await getSpecificCourse(idCourse);
             setCourseData(response_course?.responseJSON?.data);
 
-            await closeMonitorApp();
+            if(response?.responseJSON?.access?.hub === true) {
+                await closeMonitorApp();
+            }
         })();
     }, []);
 

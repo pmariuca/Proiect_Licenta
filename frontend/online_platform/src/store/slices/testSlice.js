@@ -5,6 +5,10 @@ const initialState = {
     questions: null,
     currentQuestion: null,
     answers: [],
+    copy: 0,
+    paste: 0,
+    cut: 0,
+    exitWindow: 0,
     isTestActive: false
 };
 
@@ -25,6 +29,18 @@ export const testSlice = createSlice({
             if (state.answers && state.currentQuestion != null) {
                 state.answers[state.currentQuestion] = action.payload;
             }
+        },
+        setCopy: (state, action) => {
+            state.copy ++;
+        },
+        setPaste: (state, action) => {
+            state.paste ++;
+        },
+        setCut: (state, action) => {
+            state.cut ++;
+        },
+        setExitWindow: (state, action) => {
+            state.exitWindow ++;
         },
         setTestActive: (state, action) => {
             state.isTestActive = action.payload;
