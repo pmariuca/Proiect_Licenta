@@ -92,3 +92,14 @@ export function verifyDate(disponibility) {
         return currentDateTime <=limitDateTime;
     }
 }
+
+export function downloadBlob(blob, filename) {
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = downloadUrl;
+    downloadLink.setAttribute('download', filename);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    window.URL.revokeObjectURL(downloadUrl);
+}

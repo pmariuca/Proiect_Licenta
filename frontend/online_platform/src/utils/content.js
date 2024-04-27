@@ -146,4 +146,5 @@ export const RESULTS_PAGE = {
     ALL_PHOTOS: 'Descarcă toate capturile de ecran',
     DOWNLOAD_STUDENT: 'Descarcă răspunsurile unui student',
     DOWNLOAD: 'Descarcă',
+    SELECT_STUDENT: 'Selectează studentul',
 }

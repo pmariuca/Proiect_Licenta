@@ -4,9 +4,9 @@ const serviceAccount = require('../screenshots-d1cba-firebase-adminsdk-n49a5-829
 const admin = require('firebase-admin');
 const {join, basename, dirname} = require('path');
 const {tmpdir} = require('os');
-const {createWriteStream, createReadStream, unlinkSync, promises} = require('fs');
+const {createWriteStream, createReadStream, unlinkSync, promises, writeFileSync, unlink} = require('fs');
 const archiver = require('archiver');
-
+const PDFDocument = require('pdfkit');
 
 const router = express.Router();
 
@@ -15,6 +15,8 @@ admin.initializeApp({
     storageBucket: process.env.FIREBASE_BUCKET_SCREENSHOTS,
 });
 
+const bucket = admin.storage().bucket();
+
 router.get('/getNoOfSubmits', async(req, res) => {
    try {
        const {activityID} = req.query;
@@ -22,7 +24,8 @@ router.get('/getNoOfSubmits', async(req, res) => {
        const examsDatabase = clientMongo.db('Exams');
        const exams = examsDatabase.collection('Exams');
 
-       const noOfSubmits = await exams.countDocuments({ activityID: activityID, 'submits.0': { $exists: true }});
+       const exam = await exams.findOne({ activityID: activityID });
+       const noOfSubmits = exam ? exam.submits.length : 0;
 
        return res.status(200).json({'noOfSubmits': noOfSubmits});
    } catch (error) {
@@ -33,7 +36,6 @@ router.get('/getNoOfSubmits', async(req, res) => {
 router.get('/getScreenshots', async(req, res) => {
     try {
         const { activityID } = req.query;
-        const bucket = admin.storage().bucket();
         const folderPath = `${activityID}/`;
         const tempFilePath = join(tmpdir(), `${activityID}.zip`);
         const output = createWriteStream(tempFilePath);
@@ -58,7 +60,7 @@ router.get('/getScreenshots', async(req, res) => {
 
         const [files] = await bucket.getFiles({ prefix: folderPath });
         if (files.length === 0) {
-            return res.status(404).json('No screenshots found for this activity.');
+            return res.status(404).json({'message': 'No screenshots found for this activity.'});
         }
 
         for (const file of files) {
@@ -75,6 +77,158 @@ router.get('/getScreenshots', async(req, res) => {
         }
 
         archive.finalize();
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getAllResults', async(req, res) => {
+    try {
+        const { activityID } = req.query;
+
+        const examsDatabase = clientMongo.db('Exams');
+        const exams = examsDatabase.collection('Exams');
+
+        const query = { activityID: activityID };
+        const exam = await exams.findOne(query);
+
+        const doc = new PDFDocument();
+        const filePath = join(__dirname, `results-${activityID}.pdf`);
+
+        const stream = doc.pipe(createWriteStream(filePath));
+
+        doc.fontSize(12).text(JSON.stringify(exam, null, 2), {
+            wrap: true,
+            indent: 20
+        });
+
+        doc.end();
+
+        stream.on('finish', function () {
+            res.download(filePath, `results-${activityID}.pdf`, (err) => {
+                if (err) {
+                    console.error(err);
+                    if (!res.headersSent) {
+                        res.status(500).send('Error occurred');
+                    }
+                } else {
+                    unlinkSync(filePath);
+                }
+            });
+        });
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getStudentsSubmits', async(req, res) => {
+    try {
+        const {activityID} = req.query;
+
+        const examsDatabase = clientMongo.db('Exams');
+        const exams = examsDatabase.collection('Exams');
+
+        const exam = await exams.findOne({ activityID: activityID });
+        let studentsSubmits = [];
+        if(exam) {
+            for (const submit of exam.submits) {
+                studentsSubmits.push(submit.username);
+            }
+        }
+
+        return res.status(200).json({'studentsSubmits': studentsSubmits});
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getStudentResultsScreenshots', async(req, res) => {
+    try {
+        const {activityID, username} = req.query;
+
+        const studentFolderPath = `${activityID}/${username}/`; // Folder path includes the student's username
+        const tempFilePath = join(tmpdir(), `${username}-${activityID}.zip`);
+        const output = createWriteStream(tempFilePath);
+        const archive = archiver('zip', { zlib: { level: 9 }});
+
+        output.on('close', () => {
+            res.download(tempFilePath, `${username}-${activityID}.zip`, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                } else {
+                    console.log('Student archive has been downloaded');
+                }
+                // Make sure to delete the temporary file after sending the response
+                unlink(tempFilePath, (err) => {
+                    if (err) console.error('Error deleting temp file:', err);
+                });
+            });
+        });
+
+        archive.on('error', (err) => {
+            console.error('Archiving error:', err);
+            res.status(500).json({ error: 'Failed to create archive' });
+        });
+
+        archive.pipe(output);
+
+        const [files] = await bucket.getFiles({ prefix: studentFolderPath });
+        if (files.length === 0) {
+            return res.status(404).json({'message': 'No screenshots found for this student.'});
+        }
+
+        files.forEach(file => {
+            const relativePath = file.name.replace(studentFolderPath, '');
+            if (relativePath) { // Check if the file is not just the directory itself
+                archive.append(bucket.file(file.name).createReadStream(), { name: relativePath });
+            }
+        });
+
+        archive.finalize();
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getStudentResultsData', async(req, res) => {
+    try {
+        const {activityID, username} = req.query;
+
+        const examsDatabase = clientMongo.db('Exams');
+        const exams = examsDatabase.collection('Exams');
+
+        const query = { activityID: activityID, 'submits.username': username };
+        const projection = { 'submits.$': 1 };
+        const exam = await exams.findOne(query, { projection });
+
+        if (exam) {
+            const doc = new PDFDocument();
+            const filePath = join(__dirname, `results-${activityID}-${username}.pdf`);
+
+            const stream = doc.pipe(createWriteStream(filePath));
+
+            doc.fontSize(12).text(JSON.stringify(exam, null, 2), {
+                wrap: true,
+                indent: 20
+            });
+
+            doc.end();
+
+            stream.on('finish', function () {
+                res.download(filePath, `results-${activityID}-${username}.pdf`, (err) => {
+                    if (err) {
+                        console.error(err);
+                        if (!res.headersSent) {
+                            res.status(500).send('Error occurred');
+                        }
+                    } else {
+                        unlinkSync(filePath);
+                    }
+                });
+            });
+        } else {
+            res.status(404).json({ 'message': 'No results found for the provided activityID and username.' });
+        }
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
     }
