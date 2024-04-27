@@ -25,11 +25,16 @@ export function populateGlobalSlice(userData, dispatch) {
 
 export function populateTestSlice(testData, dispatch) {
     const {activity, questions} = testData;
-
     dispatch(testSlice.actions.setActivity(activity));
     dispatch(testSlice.actions.setQuestions(questions));
     dispatch(testSlice.actions.setCurrentQuestion(0));
     dispatch(testSlice.actions.setAnswers([]));
+}
+
+export function populateCourseSlice(data, dispatch) {
+    const {courseID, courseData} = data;
+    dispatch(courseSlice.actions.setCourseID(courseID));
+    dispatch(courseSlice.actions.setCourseData(courseData));
 }
 
 export function getWeeks() {
@@ -86,4 +91,15 @@ export function verifyDate(disponibility) {
 
         return currentDateTime <=limitDateTime;
     }
+}
+
+export function downloadBlob(blob, filename) {
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const downloadLink = document.createElement('a');
+    downloadLink.href = downloadUrl;
+    downloadLink.setAttribute('download', filename);
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    window.URL.revokeObjectURL(downloadUrl);
 }

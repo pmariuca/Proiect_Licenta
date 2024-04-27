@@ -129,6 +129,10 @@
   }
 }
 
+button:focus-visible {
+  outline: none;
+}
+
 .menu-drawer-item.home {
   background-color: #0F6CBF;
   color: #fff;
@@ -201,6 +205,50 @@
 #fraud-alert {
   display: none;
   opacity: 0;
+}
+
+.overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  transition: opacity 0.3s;
+  opacity: 1;
+  z-index: 11;
+}
+
+#userModal {
+  display: none;
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  width: 40%;
+  height: 50%;
+  background-color: #FFFFFF;
+  padding: 1rem;
+  z-index: 12;
+}
+
+.user-row {
+  cursor: pointer;
+  padding: 0.75rem;
+}
+
+.user-row.selected {
+    background-color: #0F6CBF;
+    color: #fff;
+}
+
+.overlay.overlay-active,
+.overlay.overlay-active + #userModal {
+  display: block;
+}
+
+button:disabled {
+  background-color: #8F959E;
 }
 
 @keyframes fadeOut {

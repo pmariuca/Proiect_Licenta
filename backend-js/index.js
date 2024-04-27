@@ -7,6 +7,7 @@ const authRoutes = require('./server/authRoutes');
 const coursesRoutes = require('./server/coursesRoutes');
 const activitiesRoutes = require('./server/activitiesRoutes');
 const questionsRoutes = require('./server/questionsRoutes');
+const examsRoutes = require('./server/examsRoutes');
 
 const app = express();
 app.use(express.json());
@@ -33,6 +34,7 @@ app.use('/auth', authRoutes);
 app.use('/courses', coursesRoutes);
 app.use('/activities', activitiesRoutes);
 app.use ('/questions', questionsRoutes);
+app.use('/exams', examsRoutes);
 
 io.on('connection', (socket) => {
     console.log('A user connected');

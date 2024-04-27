@@ -1,5 +1,6 @@
 import {useSelector} from "react-redux";
 import {testSlice} from "../store/slices/testSlice";
+import {downloadBlob} from "./functions";
 
 export async function logUser(userData) {
     try {
@@ -153,14 +154,14 @@ export async function getQuestions(numberOfQuestions) {
     }
 }
 
-export async function submitAnswers(username, activityID, answers) {
+export async function submitAnswers(username, activityID, answers, fraudAttempts) {
     try {
         const response = await fetch('http://localhost:3001/questions/submitAnswers', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({username, activityID, answers}),
+            body: JSON.stringify({username, activityID, answers, fraudAttempts}),
         });
 
         const responseJSON = await response.json();
@@ -237,5 +238,121 @@ export async function closeMonitorApp() {
         return {responseJSON, status: response.status};
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getNoOfSubmits(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getNoOfSubmits');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getScreenshots(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getScreenshots');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/zip')) {
+            const blob = await response.blob();
+
+            const downloadUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = `${activityID}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(downloadUrl);
+
+            return { status: 200 }
+        } else {
+            const responseJSON = await response.json();
+            return { responseJSON, status: response.status };
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getAllResults(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getAllResults');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        if (response.ok) {
+            const blob = await response.blob();
+
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = downloadUrl;
+            downloadLink.setAttribute('download', `results-${activityID}.pdf`);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            window.URL.revokeObjectURL(downloadUrl);
+        } else {
+            console.log('Server returned an error response');
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getStudentsSubmits(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getStudentsSubmits');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getStudentResults(activityID, username, hasScreenshots) {
+    try {
+        if(hasScreenshots) {
+            const screenshotsUrl = new URL('http://localhost:3001/exams/getStudentResultsScreenshots');
+            screenshotsUrl.searchParams.append('activityID', activityID);
+            screenshotsUrl.searchParams.append('username', username);
+
+            const responseScreenshots = await fetch(screenshotsUrl);
+            if (responseScreenshots.ok) {
+                const zipBlob = await responseScreenshots.blob();
+                downloadBlob(zipBlob, `${username}-${activityID}.zip`);
+            } else {
+                console.error('Server returned an error response for the ZIP');
+            }
+        }
+
+        const resultsDataUrl = new URL('http://localhost:3001/exams/getStudentResultsData');
+        resultsDataUrl.searchParams.append('activityID', activityID);
+        resultsDataUrl.searchParams.append('username', username);
+
+        const responseData = await fetch(resultsDataUrl);
+        if (responseData.ok) {
+            const pdfBlob = await responseData.blob();
+            downloadBlob(pdfBlob, `results-${activityID}-${username}.pdf`);
+        } else {
+            console.error('Server returned an error response for the PDF');
+        }
+    } catch (error) {
+        console.error('There has been an error processing the request:', error);
     }
 }

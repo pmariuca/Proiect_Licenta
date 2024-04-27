@@ -12,6 +12,7 @@ import TestPage from "./pages/TestPage";
 import Authenticate from "./pages/Authenticate";
 import QuestionPage from "./pages/QuestionPage";
 import ClosedTestPage from "./pages/ClosedTestPage";
+import ResultsPage from "./pages/ResultsPage";
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
                 <Route path='/course/:id' element={<CoursePage logoutFunction={handleLogoutToken} />}/>
                 <Route path='/add-activity' element={<AddActivityPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id'} element={<TestPage logoutFunction={handleLogoutToken}/>} />
+                <Route path={'/test/results/:id'} element={<ResultsPage logoutFunction={handleLogoutToken}/>}/>
                 <Route path={'/test/:id/:currentQuestion'} element={<QuestionPage logoutFunction={handleLogoutToken}/>} />
                 <Route path={'/test/:id/end'} element={<ClosedTestPage logoutFunction={handleLogoutToken}/>}/>
                 <Route path={'test/:id/authenticate'} element={<Authenticate logoutFunction={handleLogoutToken}/>} />

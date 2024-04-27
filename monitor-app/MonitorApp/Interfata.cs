@@ -256,7 +256,7 @@ namespace MonitorAppBackend
             EnumWindows(enumProc, IntPtr.Zero);
 
             TimerCallback callback = new TimerCallback(EnumTheWindowsCallback);
-            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(15));
+            timer = new System.Threading.Timer(callback, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
         }
 
         private void GetExistingProcesses()

@@ -139,3 +139,12 @@ export const QUESTION_PAGE = {
     HOMEPAGE: 'Homepage',
     ALERT: 'Încercările de fraudare a testului sunt interzise!'
 }
+
+export const RESULTS_PAGE = {
+    NO_ANSWERS: 'Nu există răspunsuri pentru acest test.',
+    ALL_ANSWERS: 'Descarcă toate răspunsurile',
+    ALL_PHOTOS: 'Descarcă toate capturile de ecran',
+    DOWNLOAD_STUDENT: 'Descarcă răspunsurile unui student',
+    DOWNLOAD: 'Descarcă',
+    SELECT_STUDENT: 'Selectează studentul',
+}

@@ -19,10 +19,10 @@ function TestPage(params) {
     const [questions, setQuestions] = useState(null);
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const idCourse = window.location.href.split('/')[4].slice(0, 2);
     const activityID = window.location.href.split('/')[4];
-    const dispatch = useDispatch();
 
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);

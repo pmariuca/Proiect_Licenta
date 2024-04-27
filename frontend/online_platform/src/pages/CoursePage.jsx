@@ -20,7 +20,6 @@ function CoursePage(params) {
 
     const [courses, setCourses] = useState({});
 
-    const dispatch = useDispatch();
     const { pathname } = useLocation();
     const idCourse = pathname.split('/')[2];
 

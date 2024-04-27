@@ -1,3 +1,6 @@
+const {existsSync, readdirSync, lstatSync, unlinkSync, rmdirSync} = require("fs");
+const {join} = require("path");
+
 function checkRole(username) {
     const signature = username.split('@')[1];
     if(signature.startsWith('stud')) {
@@ -32,5 +35,5 @@ function convertDate(date) {
 
 module.exports = {
     checkRole,
-    convertDate
+    convertDate,
 }
