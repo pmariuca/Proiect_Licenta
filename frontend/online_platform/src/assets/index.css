@@ -129,6 +129,10 @@
   }
 }
 
+button:focus-visible {
+  outline: none;
+}
+
 .menu-drawer-item.home {
   background-color: #0F6CBF;
   color: #fff;

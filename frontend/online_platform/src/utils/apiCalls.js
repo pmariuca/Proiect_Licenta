@@ -252,3 +252,36 @@ export async function getNoOfSubmits(activityID) {
         console.log('There has been an error processing the request: ', error);
     }
 }
+
+export async function getScreenshots(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getScreenshots');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/zip')) {
+            const blob = await response.blob();
+
+            const downloadUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = `${activityID}.zip`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(downloadUrl);
+
+            return { status: 200 }
+        } else {
+            const responseJSON = await response.json();
+            return { responseJSON, status: response.status };
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}

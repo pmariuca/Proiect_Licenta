@@ -1,9 +1,11 @@
 import Navbar from "../components/Navbar";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {getActivityDetials, getNoOfSubmits, getSpecificCourse} from "../utils/apiCalls";
+import {getActivityDetials, getNoOfSubmits, getScreenshots, getSpecificCourse} from "../utils/apiCalls";
 import {formatDate, populateCourseSlice, populateTestSlice} from "../utils/functions";
 import ActivityTitle from "../components/ActivityTitle";
+import {RESULTS_PAGE} from "../utils/content";
+import Footer from "../components/Footer";
 
 function ResultsPage(params) {
     const { logoutFunction } = params || {};
@@ -61,6 +63,15 @@ function ResultsPage(params) {
         }
     }, [activityID, activity]);
 
+    const handleClickScreenshots = async () => {
+        try {
+            const response = await getScreenshots(activityID);
+            console.log(response);
+        } catch(error) {
+            console.log(error);
+        }
+    };
+
     return (
         <div className={'page-container'}>
             <Navbar userName={userName} handleLogoutToken={logoutFunction}/>
@@ -89,8 +100,56 @@ function ResultsPage(params) {
                     )}
 
                     <hr className={'mt-4'}/>
+
+                    {noOfSubmits === 0 ? (
+                        <div className={'mt-4 text-lg font-light text-center'}>
+                            {RESULTS_PAGE.NO_ANSWERS}
+                        </div>
+                    ) : (
+                        <div className={'my-4'}>
+                            <span className={'text-lg font-light'}>
+                                Există {noOfSubmits} răspunsuri pentru acest test.
+                            </span>
+
+                            <div className={'flex justify-around'}>
+                                <div className={'my-4 flex flex-col'}>
+                                <span className={'text-[0.931rem]'}>
+                                    {RESULTS_PAGE.ALL_ANSWERS}
+                                </span>
+
+                                    <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}>
+                                        {RESULTS_PAGE.DOWNLOAD}
+                                    </button>
+                                </div>
+
+                                <div className={'my-4 flex flex-col'}>
+                                <span className={'text-[0.931rem]'}>
+                                    {RESULTS_PAGE.ALL_PHOTOS}
+                                </span>
+
+                                    <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                                        onClick={handleClickScreenshots}
+                                    >
+                                        {RESULTS_PAGE.DOWNLOAD}
+                                    </button>
+                                </div>
+
+                                <div className={'my-4 flex flex-col'}>
+                                <span className={'text-[0.931rem]'}>
+                                    {RESULTS_PAGE.DOWNLOAD_STUDENT}
+                                </span>
+
+                                    <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}>
+                                        {RESULTS_PAGE.DOWNLOAD}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
+
+            <Footer/>
         </div>
     )
 }
