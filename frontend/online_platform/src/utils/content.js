@@ -148,3 +148,7 @@ export const RESULTS_PAGE = {
     DOWNLOAD: 'Descarcă',
     SELECT_STUDENT: 'Selectează studentul',
 }
+
+export const FILE_QUESTION = {
+    ADD: 'Trageți fișierele aici sau clic pentru a selecta fișiere'
+}

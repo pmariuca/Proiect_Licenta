@@ -50,10 +50,10 @@ function WeekContainer(params) {
 
             </div>
 
-            <div className={'m-4'}>
+            <div className={'m-4 mt-0'}>
                 {activities.map((activity, index) => {
                     return (
-                        <div key={index} className={activities.length > 1 && index !== activities.length-1 ? `pb-4 border-b-[0.063rem] border-solid border-[#00000020] ` : 'pt-4'}>
+                        <div key={index} className={activities.length > 1 && index !== activities.length-1 ? `py-4 border-b-[0.063rem] border-solid border-[#00000020] ` : 'pt-4'}>
                             {role === 'student' ? (
                                 <a href={`/test/${activity?.activityID}`}
                                    className={'activity-container items-end pb-2'}>

@@ -1,21 +1,28 @@
 const express = require('express');
 const {clientMongo} = require('../config');
 const serviceAccount = require('../screenshots-d1cba-firebase-adminsdk-n49a5-829e49782c.json');
+const serviceAccountFiles = require('../examfiles-7a4d6-firebase-adminsdk-35jsz-f42602ae74.json');
 const admin = require('firebase-admin');
 const {join, basename, dirname} = require('path');
 const {tmpdir} = require('os');
 const {createWriteStream, createReadStream, unlinkSync, promises, writeFileSync, unlink} = require('fs');
 const archiver = require('archiver');
 const PDFDocument = require('pdfkit');
-
 const router = express.Router();
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     storageBucket: process.env.FIREBASE_BUCKET_SCREENSHOTS,
-});
+}, 'screenshots');
 
-const bucket = admin.storage().bucket();
+const bucket = admin.app('screenshots').storage().bucket();
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccountFiles),
+    storageBucket: process.env.FIREBASE_BUCKET_FILES,
+}, 'filesBucketDownload');
+
+const bucketFiles = admin.app('filesBucketDownload').storage().bucket();
 
 router.get('/getNoOfSubmits', async(req, res) => {
    try {
@@ -116,6 +123,78 @@ router.get('/getAllResults', async(req, res) => {
                 }
             });
         });
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getAllFiles', async(req, res) => {
+    try {
+        const { activityID } = req.query;
+
+        const [files] = await bucketFiles.getFiles({ prefix: `${activityID}/` });
+        if (files.length === 0) {
+            return res.status(404).json({'message': 'No files found for this activity.'});
+        }
+
+        const archive = archiver('zip', {
+            zlib: { level: 9 }
+        });
+
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${activityID}.zip"`);
+
+        archive.on('error', function(err) {
+            throw err;
+        });
+
+        archive.pipe(res);
+
+        files.forEach(file => {
+            const fullPath = file.metadata.name;
+            const relativePath = fullPath.slice(activityID.length + 1);
+            archive.append(bucketFiles.file(fullPath).createReadStream(), { name: relativePath });
+        });
+
+        await archive.finalize();
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getStudentResultsFiles', async(req, res) => {
+    try {
+        const { activityID, username } = req.query;
+
+        const prefix = `${activityID}/${username}/`;
+        const [files] = await bucketFiles.getFiles({
+            prefix: prefix,
+            delimiter: '/'
+        });
+        if (files.length === 0) {
+            return res.status(404).json({'message': 'No files found for this activity.'});
+        }
+
+        const archive = archiver('zip', {
+            zlib: { level: 9 }
+        });
+
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', `attachment; filename="${activityID}-${username}.zip"`);
+
+        archive.on('error', function(err) {
+            throw err;
+        });
+
+        archive.pipe(res);
+
+        files.forEach(file => {
+            const fullPath = file.metadata.name;
+            const relativePath = fullPath.substring(prefix.length);
+            archive.append(bucketFiles.file(fullPath).createReadStream(), { name: relativePath });
+        });
+
+        await archive.finalize();
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
     }

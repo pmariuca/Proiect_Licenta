@@ -2,7 +2,14 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {checkSubmission, getActivityDetials, getQuestions, getSpecificCourse, startMonitor} from "../utils/apiCalls";
+import {
+    checkSubmission,
+    getActivityDetials,
+    getQuestions,
+    getQuestionsFile,
+    getSpecificCourse,
+    startMonitor
+} from "../utils/apiCalls";
 import {formatDate, populateTestSlice, verifyDate} from "../utils/functions";
 import {TEST_PAGE} from "../utils/content";
 import {useNavigate} from "react-router-dom";
@@ -27,7 +34,6 @@ function TestPage(params) {
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);
     const surname = useSelector(state => state.global.surname);
-    const role = useSelector(state => state.global.role);
     const currentQuestion = useSelector(state => state.test.currentQuestion);
 
     const userName = name?.toUpperCase() + ' ' + surname;
@@ -54,14 +60,20 @@ function TestPage(params) {
     useEffect(() => {
         if(activity) {
             (async () => {
-                const response = await getQuestions(activity?.questions?.noOfQuestions);
+                let testData;
+                let response;
+                if(activity?.answers?.choice) {
+                    response = await getQuestions(activity?.questions?.noOfQuestions);
+
+                } else {
+                    response = await getQuestionsFile(activity?.questions?.noOfQuestions);
+                }
                 setQuestions(response?.responseJSON?.data);
 
-                const testData = {
+                testData = {
                     activity: activity,
                     questions: response?.responseJSON?.data
                 };
-
                 populateTestSlice(testData, dispatch);
             })();
         }
@@ -73,9 +85,10 @@ function TestPage(params) {
             navigate(`/test/${activityID}/authenticate`);
         } else {
             navigate(`/test/${activityID}/${currentQuestion}`);
+
             if(activity?.access?.hub) {
                 (async () => {
-                    const response = await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name, activityID);
+                    await startMonitor(username, activity?.questions?.timeLimit, activity?.details?.name, activityID);
                 })();
             }
         }

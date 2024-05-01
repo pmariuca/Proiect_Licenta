@@ -5,10 +5,12 @@ import {QUESTION_PAGE} from "../utils/content";
 import {useEffect, useMemo, useState} from "react";
 import {testSlice} from "../store/slices/testSlice";
 import { useLocation, useNavigationType, useNavigate} from "react-router-dom";
-import {getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
+import {getActivityDetials, getSpecificCourse, submitResultsFile} from "../utils/apiCalls";
 import {finishTest} from "../store/thunks/finishTestThunk";
 import ActivityTitle from "../components/ActivityTitle";
 import { io } from 'socket.io-client';
+import ChoiceQuestion from "../components/ChoiceQuestion";
+import FileQuestion from "../components/FileQuestion";
 
 let submitPerformed = false;
 let showedAlert = false;
@@ -19,7 +21,10 @@ function QuestionPage(params) {
 
     const [courseData, setCourseData] = useState({});
     const [activity, setActivity] = useState(null);
+    const [examType, setExamType] = useState('');
+
     const [selectedAnswer, setSelectedAnswer] = useState('');
+    const [files, setFiles] = useState([]);
 
     const dispatch = useDispatch();
     const location = useLocation();
@@ -64,6 +69,7 @@ function QuestionPage(params) {
         (async () => {
             const response = await getActivityDetials(activityID);
             setActivity(response?.responseJSON);
+            setExamType(response?.responseJSON?.answers?.choice ? 'Choice' : 'File');
 
             const response_course = await getSpecificCourse(idCourse);
             setCourseData(response_course?.responseJSON?.data);
@@ -163,6 +169,7 @@ function QuestionPage(params) {
         await dispatch(testSlice.actions.setTestActive(false));
         navigate(`/test/${activityID}/end`);
     };
+
     const formatTimeLeft = () => {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
@@ -182,11 +189,33 @@ function QuestionPage(params) {
             dispatch(testSlice.actions.setCurrentQuestion(currentQuestion + 1));
             navigate(`/test/${activityID}/${currentQuestion + 1}`);
         }
-    }
+    };
+
+    const handleClickFile = async() => {
+        if (currentQuestion + 1 === noOfQuestions) {
+            const fraudAttempts = { 'copy': copy, 'paste': paste, 'cut': cut, 'exitWindow': exitWindow };
+
+            try {
+                await submitResultsFile(username, activityID, files, fraudAttempts);
+
+                dispatch(testSlice.actions.setTestActive(false));
+                navigate(`/test/${activityID}/end`);
+            } catch (error) {
+                console.error('Error during file submission:', error);
+            }
+        } else {
+            dispatch(testSlice.actions.setCurrentQuestion(currentQuestion + 1));
+            navigate(`/test/${activityID}/${currentQuestion + 1}`);
+        }
+    };
+
+    const handleAddedFile = (selectedFile) => {
+        setFiles(prevFiles => [...prevFiles, selectedFile]);
+    };
 
     const renderQuestions = useMemo(() => {
-        return questions[currentQuestion]?.question?.answers.map((answer, index) => {
-            return (
+        if (examType === 'Choice' && questions[currentQuestion]?.question?.answers) {
+            return questions[currentQuestion].question.answers.map((answer, index) => (
                 <li key={index}>
                     <input
                         type="radio"
@@ -200,9 +229,10 @@ function QuestionPage(params) {
                         {answer}
                     </label>
                 </li>
-            );
-        });
-    }, [questions, currentQuestion, selectedAnswer]);
+            ));
+        }
+        return null;
+    }, [questions, currentQuestion, selectedAnswer, examType]);
 
     const showAlert = () => {
         const alertElement = document.getElementById('fraud-alert');
@@ -234,22 +264,23 @@ function QuestionPage(params) {
                         </div>
                     </div>
 
+                    { examType === 'Choice' &&
+                        <ChoiceQuestion questions={questions}
+                                        currentQuestion={currentQuestion}
+                                        renderQuestions={renderQuestions}
+                        />
+                    }
 
-                    <div className={'mt-4 pl-4'}>
-                        <span>
-                            {questions[currentQuestion]?.question?.query}
-                        </span>
-
-                        <div>
-                            <ul>
-                                {renderQuestions}
-                            </ul>
-                        </div>
-                    </div>
+                    { examType === 'File' &&
+                        <FileQuestion questions={questions}
+                                      currentQuestion={currentQuestion}
+                                      handleSubmit={handleAddedFile}
+                        />
+                    }
 
                     <div className={'absolute flex justify-end bottom-[2.5rem] right-[3.75rem]'}>
                         <button className={'bg-primary px-4 py-2 text-text-secondary font-light'}
-                                onClick={handleClick}>
+                                onClick={examType === 'Choice' ? handleClick : handleClickFile}>
                             {currentQuestion + 1 === noOfQuestions ?
                                 QUESTION_PAGE.SUBMIT :
                                 QUESTION_PAGE.NEXT
