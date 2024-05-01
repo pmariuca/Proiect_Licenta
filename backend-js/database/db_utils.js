@@ -80,4 +80,4 @@ const student = {
     image_path: 'D:\\Learning\\Proiect_Licenta\\poze\\popescusimona21@stud.ase.ro.jpeg'
 };
 
-insertStudent(student);
+// insertStudent(student);

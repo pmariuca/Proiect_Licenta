@@ -1,12 +1,13 @@
 import Navbar from "../components/Navbar";
+import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {
-    getActivityDetials,
+    getActivityDetials, getAllFiles,
     getAllResults,
     getNoOfSubmits,
     getScreenshots,
-    getSpecificCourse, getStudentResults,
+    getSpecificCourse, getStudentFiles, getStudentResults,
     getStudentsSubmits
 } from "../utils/apiCalls";
 import {formatDate, populateCourseSlice, populateTestSlice} from "../utils/functions";
@@ -25,6 +26,7 @@ function ResultsPage(params) {
     const [noOfSubmits, setNoOfSubmits] = useState(0);
     const [submitsStudents, setSubmitsStudents] = useState([]);
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [examType, setExamType] = useState('');
 
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);
@@ -38,6 +40,7 @@ function ResultsPage(params) {
         (async () => {
             const response = await getActivityDetials(activityID);
             setActivity(response?.responseJSON);
+            setExamType(response?.responseJSON?.answers?.choice ? 'Choice' : 'File');
 
             const response_course = await getSpecificCourse(idCourse);
             setCourseData(response_course?.responseJSON?.data);
@@ -82,10 +85,13 @@ function ResultsPage(params) {
             console.log(error);
         }
     };
-
     const handleClickSaveAll = async () => {
         try {
            await getAllResults(activityID);
+
+           if(examType === 'File') {
+               await getAllFiles(activityID);
+           }
         } catch(error) {
             console.log(error);
         }
@@ -111,6 +117,10 @@ function ResultsPage(params) {
           overlay.classList.add('overlay-active');
 
           await getStudentResults(activityID, selectedStudent, activity?.access?.hub);
+
+          if(examType === 'File') {
+              await getStudentFiles(activityID, selectedStudent);
+          }
       }  catch(error) {
           console.log(error);
       }
@@ -132,16 +142,15 @@ function ResultsPage(params) {
                 <hr className={'mt-2'}/>
                 <div className={'overflow-auto max-h-[15rem]'}>
                     {submitsStudents?.map((username, index) => (
-                        <>
+                        <React.Fragment key={`${username}-${index}`}>
                             <div
-                                key={username}
                                 className={`user-row text-[0.938rem] ${selectedStudent === username ? 'selected' : ''}`}
                                 onClick={() => handleSelectStudent(username)}
                             >
                                 {username}
                             </div>
                             {index !== submitsStudents.length - 1 && <hr/>}
-                        </>
+                        </React.Fragment>
                     ))}
                 </div>
 

@@ -1,5 +1,5 @@
 import './assets/App.css';
-import {BrowserRouter as Router, Routes, Route, Navigate, useNavigate} from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import Login from './pages/Login';
 import Homepage from "./pages/Homepage";
 import {useEffect, useState} from "react";
@@ -13,7 +13,6 @@ import Authenticate from "./pages/Authenticate";
 import QuestionPage from "./pages/QuestionPage";
 import ClosedTestPage from "./pages/ClosedTestPage";
 import ResultsPage from "./pages/ResultsPage";
-
 
 function App() {
     const [loggedIn, setLoggedIn] = useState(null);

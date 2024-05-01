@@ -102,6 +102,7 @@ router.post('/addActivity', async (req, res) => {
 
         await exams.insertOne({
             'activityID': id,
+            'examType': activityDetails.answers.choice ? 'Choice' : 'File',
             'submits': []
         });
 

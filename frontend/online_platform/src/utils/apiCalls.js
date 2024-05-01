@@ -154,6 +154,19 @@ export async function getQuestions(numberOfQuestions) {
     }
 }
 
+export async function getQuestionsFile(numberOfQuestions) {
+    try {
+        const url = new URL('http://localhost:3001/questions/getQuestionsFile');
+        url.searchParams.append('numberOfQuestions', numberOfQuestions);
+
+        const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
 export async function submitAnswers(username, activityID, answers, fraudAttempts) {
     try {
         const response = await fetch('http://localhost:3001/questions/submitAnswers', {
@@ -162,6 +175,28 @@ export async function submitAnswers(username, activityID, answers, fraudAttempts
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({username, activityID, answers, fraudAttempts}),
+        });
+
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function submitResultsFile(username, activityID, files, fraudAttempts) {
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('activityID', activityID);
+    formData.append('fraudAttempts', JSON.stringify(fraudAttempts));
+    Object.entries(files).forEach(([questionId, file]) => {
+        formData.append('files', file, file.name);
+    });
+
+    try {
+        const response = await fetch('http://localhost:3001/questions/submitResultsFile', {
+            method: 'POST',
+            body: formData,
         });
 
         const responseJSON = await response.json();
@@ -312,6 +347,29 @@ export async function getAllResults(activityID) {
     }
 }
 
+export async function getAllFiles(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getAllFiles');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `${activityID}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
 export async function getStudentsSubmits(activityID) {
     try {
         const url = new URL('http://localhost:3001/exams/getStudentsSubmits');
@@ -353,6 +411,31 @@ export async function getStudentResults(activityID, username, hasScreenshots) {
             console.error('Server returned an error response for the PDF');
         }
     } catch (error) {
+        console.error('There has been an error processing the request:', error);
+    }
+}
+
+export async function getStudentFiles(activityID, username) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getStudentResultsFiles');
+        url.searchParams.append('activityID', activityID);
+        url.searchParams.append('username', username);
+
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `${activityID}-${username}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+    }
+    catch (error) {
         console.error('There has been an error processing the request:', error);
     }
 }

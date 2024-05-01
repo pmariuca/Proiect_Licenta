@@ -251,6 +251,18 @@ button:disabled {
   background-color: #8F959E;
 }
 
+.drop-zone {
+  margin-top: 1rem;
+  border: 2px dashed #ccc;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.drop-zone.dragging {
+  background-color: #eee;
+}
+
 @keyframes fadeOut {
   from {
     opacity: 1;
