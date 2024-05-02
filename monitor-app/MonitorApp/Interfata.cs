@@ -51,6 +51,7 @@ namespace MonitorAppBackend
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
+
         static extern bool IsWindowVisible(IntPtr hWnd);
 
         delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
@@ -195,6 +196,7 @@ namespace MonitorAppBackend
             var bucketName = "screenshots-d1cba.appspot.com";
 
             int nr = 1;
+            Size size = new Size(1920, 1080);
 
             System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
             timer.Interval = interval * 1000;
@@ -204,16 +206,15 @@ namespace MonitorAppBackend
 
                 if (totalSeconds >= 0)
                 {
-                    using (Bitmap screenshot = new Bitmap(Screen.PrimaryScreen.Bounds.Width,
-                                           Screen.PrimaryScreen.Bounds.Height,
+                    using (Bitmap screenshot = new Bitmap(1920,
+                                           1080,
                                            PixelFormat.Format32bppArgb))
                     {
                         using (Graphics gfxScreenshot = Graphics.FromImage(screenshot))
                         {
                             gfxScreenshot.CopyFromScreen(Screen.PrimaryScreen.Bounds.X,
                                                          Screen.PrimaryScreen.Bounds.Y,
-                                                         0, 0,
-                                                         Screen.PrimaryScreen.Bounds.Size,
+                                                         0, 0, size,
                                                          CopyPixelOperation.SourceCopy);
                         }
 
