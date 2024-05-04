@@ -3,7 +3,7 @@ import Footer from "../components/Footer";
 import {useSelector} from "react-redux";
 import {QUESTION_PAGE} from "../utils/content";
 import {useEffect, useState} from "react";
-import {closeMonitorApp, getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
+import {analyzeFraud, closeMonitorApp, getActivityDetials, getSpecificCourse} from "../utils/apiCalls";
 import {useNavigate} from "react-router-dom";
 import ActivityTitle from "../components/ActivityTitle";
 
@@ -19,6 +19,7 @@ function ClosedTestPage(params) {
 
     const name = useSelector(state => state.global.name);
     const surname = useSelector(state => state.global.surname);
+    const username = useSelector(state => state.global.username);
     const userName = name?.toUpperCase() + ' ' + surname;
     const activityID = useSelector(state => state.test.activity.activityID);
 
@@ -32,6 +33,7 @@ function ClosedTestPage(params) {
 
             if(response?.responseJSON?.access?.hub === true) {
                 await closeMonitorApp();
+                await analyzeFraud(activityID, username, response?.responseJSON?.answers?.upload);
             }
         })();
     }, []);

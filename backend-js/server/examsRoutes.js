@@ -8,6 +8,7 @@ const {tmpdir} = require('os');
 const {createWriteStream, createReadStream, unlinkSync, promises, writeFileSync, unlink} = require('fs');
 const archiver = require('archiver');
 const PDFDocument = require('pdfkit');
+const analyzeContent = require("../vertex");
 const router = express.Router();
 
 admin.initializeApp({
@@ -308,6 +309,20 @@ router.get('/getStudentResultsData', async(req, res) => {
         } else {
             res.status(404).json({ 'message': 'No results found for the provided activityID and username.' });
         }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.post('/analyzeFraud', async(req, res) => {
+    try {
+        const { activityID, username, openFiles } = req.body;
+        await analyzeContent(activityID, username, openFiles).then((response) => {
+            console.log('Răspunsul este:', response);
+        })
+            .catch((error) => {
+                console.error('A apărut o eroare:', error);
+            });
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
     }

@@ -434,8 +434,25 @@ export async function getStudentFiles(activityID, username) {
         document.body.appendChild(a);
         a.click();
         a.remove();
+    } catch (error) {
+        console.error('There has been an error processing the request:', error);
     }
-    catch (error) {
+}
+
+export async function analyzeFraud(activityID, username, openFiles) {
+    try {
+        const response = await fetch('http://localhost:3001/exams/analyzeFraud', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({activityID, username, openFiles}),
+        });
+
+        const responseJSON = await response.json();
+
+        return {responseJSON, status: response.status};
+    } catch (error) {
         console.error('There has been an error processing the request:', error);
     }
 }
