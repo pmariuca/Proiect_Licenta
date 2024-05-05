@@ -30,7 +30,6 @@ async function analyzeContent(activityID, username, openFiles) {
     let data = await getData(activityID, username);
     let jsonData = JSON.stringify(data);
     prompt.text += `\n ${jsonData}`;
-    console.log(jsonData)
 
     const contents = [{ role: 'user', parts: [prompt] }];
 
@@ -41,13 +40,6 @@ async function analyzeContent(activityID, username, openFiles) {
     }
 
     const req = { contents };
-    req.contents.forEach(item => {
-        if (item.parts) {
-            item.parts.forEach(part => {
-                console.log(part)
-            });
-        }
-    });
 
     const streamingResp = await generativeModel.generateContentStream(req);
 
@@ -58,8 +50,6 @@ async function analyzeContent(activityID, username, openFiles) {
 
     if (assessmentBlockMatch && assessmentBlockMatch[1]) {
         const assessmentData = JSON.parse(assessmentBlockMatch[1]);
-        console.log('Assessment:', assessmentData.assessment);
-        console.log('Percentage:', assessmentData.percentage);
         return assessmentData;
     } else {
         console.error('Could not find assessment data in the response');
@@ -76,7 +66,5 @@ async function getData(activityID, username) {
 
     return exam;
 }
-
-analyzeContent('c12024-05-12', 'pricopmariuca21@stud.ase.ro', false);
 
 module.exports = analyzeContent;

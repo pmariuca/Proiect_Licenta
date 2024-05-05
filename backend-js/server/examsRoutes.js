@@ -317,11 +317,29 @@ router.get('/getStudentResultsData', async(req, res) => {
 router.post('/analyzeFraud', async(req, res) => {
     try {
         const { activityID, username, openFiles } = req.body;
-        await analyzeContent(activityID, username, openFiles).then((response) => {
+        await analyzeContent(activityID, username, openFiles).then(async (response) => {
             console.log('Răspunsul este:', response);
+
+            const examsDatabase = clientMongo.db('Exams');
+            const exams = examsDatabase.collection('Exams');
+
+            await exams.updateOne(
+                {
+                    "activityID": activityID,
+                    "submits.username": username
+                },
+                {
+                    $set: {
+                        "submits.$.fraudAssessmentAI": response
+                    }
+                }
+            );
+
+            res.status(200).json({ message: 'Data received and added successfully.' });
         })
             .catch((error) => {
-                console.error('A apărut o eroare:', error);
+                console.error('There has been an error processing the request:', error);
+                res.status(404).json({ message: 'There has been an error processing the request.' });
             });
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
