@@ -1,5 +1,6 @@
 .idea
 poze
+node_modules
 
 backend-js/node_modules
 backend-js/.idea
