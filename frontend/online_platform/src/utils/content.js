@@ -147,6 +147,10 @@ export const RESULTS_PAGE = {
     DOWNLOAD_STUDENT: 'Descarcă răspunsurile unui student',
     DOWNLOAD: 'Descarcă',
     SELECT_STUDENT: 'Selectează studentul',
+    ATTENDANCE: 'Descarcă lista de prezență',
+    ATTENDANCE_TYPE: 'Alege formatul',
+    ATTENDANCE_PDF: 'Format PDF',
+    ATTENDANCE_EXCEL: 'Format Excel'
 }
 
 export const FILE_QUESTION = {

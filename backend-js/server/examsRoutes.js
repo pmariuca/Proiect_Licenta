@@ -1,5 +1,5 @@
 const express = require('express');
-const {clientMongo} = require('../config');
+const {clientMongo, client} = require('../config');
 const serviceAccount = require('../screenshots-d1cba-firebase-adminsdk-n49a5-829e49782c.json');
 const serviceAccountFiles = require('../examfiles-7a4d6-firebase-adminsdk-35jsz-f42602ae74.json');
 const admin = require('firebase-admin');
@@ -9,6 +9,8 @@ const {createWriteStream, createReadStream, unlinkSync, promises, writeFileSync,
 const archiver = require('archiver');
 const PDFDocument = require('pdfkit');
 const analyzeContent = require("../vertex");
+const Excel = require('exceljs');
+const {checkRole} = require("../utils/functions");
 const router = express.Router();
 
 admin.initializeApp({
@@ -341,6 +343,169 @@ router.post('/analyzeFraud', async(req, res) => {
                 console.error('There has been an error processing the request:', error);
                 res.status(404).json({ message: 'There has been an error processing the request.' });
             });
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getAttendance', async(req, res) => {
+    try {
+        const { activityID } = req.query;
+
+        const database = clientMongo.db('Activities');
+        const activities = database.collection('Activities');
+
+        const document = await activities.findOne(
+            { activityID: activityID, attendance: { $exists: true } },
+            { projection: { attendance: 1 } }
+        );
+
+        if (document) {
+            res.status(200).json({message: 'Attendance data found.'});
+        } else {
+            res.status(400).json({ message: 'No attendance data found for the provided activityID.' });
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getAttendancePDF', async(req, res) => {
+    try {
+        const { activityID } = req.query;
+
+        const database = clientMongo.db('Activities');
+        const activities = database.collection('Activities');
+
+        const document = await activities.findOne(
+            { activityID: activityID, attendance: { $exists: true } },
+            { projection: { attendance: 1 } }
+        );
+
+        if (document && document.attendance) {
+            const doc = new PDFDocument();
+            const filePath = join(__dirname, `attendance-${activityID}.pdf`);
+            const stream = doc.pipe(createWriteStream(filePath));
+
+            doc.font('D:\\Learning\\Proiect_Licenta\\DejaVuSans.ttf');
+
+            doc.fontSize(16).text('Prezenta', { underline: true });
+
+            doc.moveDown(2);
+
+            const startX = 50;
+            const startY = 100;
+            const columnWidth = 300;
+            const spaceForPresence = 100;
+            const endX = startX + columnWidth + spaceForPresence;
+
+            doc.fontSize(12);
+            doc.text('Student', startX + 2, startY + 4, { width: columnWidth, align: 'left' })
+                .moveTo(startX + columnWidth, startY)
+                .lineTo(startX + columnWidth, startY + 20 * (document.attendance.length + 1))
+                .stroke()
+                .text('Prezenta', startX + 2 + columnWidth, startY + 4, { width: spaceForPresence, align: 'left' });
+
+            let positionY = startY + 20;
+
+            for (const username of document.attendance) {
+                const query = 'SELECT * FROM student WHERE username = $1';
+                const result = await client.query(query, [username]);
+                const { name, surname } = result?.rows[0];
+
+                const fullName = name + ' ' + surname;
+
+                doc.text(fullName, startX + 2, positionY + 4, { width: columnWidth, align: 'left' });
+                doc.text('', startX + columnWidth, positionY, { width: spaceForPresence, align: 'left' });
+                positionY += 20;
+            }
+
+            doc.moveTo(startX, startY)
+                .lineTo(endX, startY)
+                .stroke();
+
+            for (let i = 0; i <= document.attendance.length; i++) {
+                doc.moveTo(startX, startY + 20 * i)
+                    .lineTo(endX, startY + 20 * i)
+                    .stroke();
+            }
+
+            doc.moveTo(startX, startY)
+                .lineTo(startX, positionY)
+                .stroke();
+            doc.moveTo(endX, startY)
+                .lineTo(endX, positionY)
+                .stroke();
+
+            doc.moveTo(startX, positionY)
+                .lineTo(endX, positionY)
+                .stroke();
+
+            doc.end();
+
+            stream.on('finish', function () {
+                res.download(filePath, `attendance-${activityID}.pdf`, (err) => {
+                    if (err) {
+                        console.error('Error downloading the file:', err);
+                        if (!res.headersSent) {
+                            res.status(500).send('Error occurred during file download');
+                        }
+                    } else {
+                        unlink(filePath, (unlinkErr) => {
+                            if (unlinkErr) {
+                                console.error('Error deleting the file:', unlinkErr);
+                            }
+                        });
+                    }
+                });
+            });
+        } else {
+            res.status(404).send('No attendance data found');
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
+router.get('/getAttendanceExcel', async(req, res) => {
+    try {
+        const { activityID } = req.query;
+
+        const database = clientMongo.db('Activities');
+        const activities = database.collection('Activities');
+
+        const document = await activities.findOne(
+            { activityID: activityID, attendance: { $exists: true } },
+            { projection: { attendance: 1 } }
+        );
+
+        if (document) {
+            const workbook = new Excel.Workbook();
+            const sheet = workbook.addWorksheet('Attendance');
+
+            sheet.columns = [
+                { header: 'Student', key: 'name', width: 30 },
+                { header: 'Prezenta', key: 'presence', width: 20 }
+            ];
+
+            for (const username of document.attendance) {
+                const query = 'SELECT * FROM student WHERE username = $1';
+                const result = await client.query(query, [username]);
+                const { name, surname } = result?.rows[0];
+
+                sheet.addRow({ name: name + ' ' + surname, presence: '' });
+            }
+
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename="attendance-${activityID}.xlsx"`);
+
+            workbook.xlsx.write(res).then(function () {
+                res.status(200).end();
+            });
+        } else {
+            console.log('No attendance found or activity does not exist.');
+            res.status(404).send('No attendance found or activity does not exist');
+        }
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
     }

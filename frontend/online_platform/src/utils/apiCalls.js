@@ -1,5 +1,3 @@
-import {useSelector} from "react-redux";
-import {testSlice} from "../store/slices/testSlice";
 import {downloadBlob} from "./functions";
 
 export async function logUser(userData) {
@@ -119,6 +117,23 @@ export async function addActivity(activityDetails) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({activityDetails}),
+        });
+
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function submitAttendance(username, activityID) {
+    try {
+        const response = await fetch('http://localhost:3001/activities/submitAttendance', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({username, activityID}),
         });
 
         const responseJSON = await response.json();
@@ -284,6 +299,70 @@ export async function getNoOfSubmits(activityID) {
         const response = await fetch(url);
         const responseJSON = await response.json();
         return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getAttendance(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getAttendance');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        const responseJSON = await response.json();
+        return {responseJSON, status: response.status};
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getAttendancePDF(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getAttendancePDF');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        if (response.ok) {
+            const blob = await response.blob();
+
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = downloadUrl;
+            downloadLink.setAttribute('download', `attendance-${activityID}.pdf`);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            window.URL.revokeObjectURL(downloadUrl);
+        } else {
+            console.log('Server returned an error response');
+        }
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+}
+
+export async function getAttendanceExcel(activityID) {
+    try {
+        const url = new URL('http://localhost:3001/exams/getAttendanceExcel');
+        url.searchParams.append('activityID', activityID);
+
+        const response = await fetch(url);
+        if (response.ok) {
+            const blob = await response.blob();
+
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = downloadUrl;
+            downloadLink.setAttribute('download', `attendance-${activityID}.xlsx`);
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            window.URL.revokeObjectURL(downloadUrl);
+        } else {
+            console.error("Failed to fetch the file: " + response.statusText);
+            alert("There was a problem downloading the file. Please try again later.");
+        }
     } catch (error) {
         console.log('There has been an error processing the request: ', error);
     }

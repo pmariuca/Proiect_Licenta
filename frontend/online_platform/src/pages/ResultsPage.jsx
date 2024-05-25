@@ -4,7 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
 import {
     getActivityDetials, getAllFiles,
-    getAllResults,
+    getAllResults, getAttendance, getAttendanceExcel, getAttendancePDF,
     getNoOfSubmits,
     getScreenshots,
     getSpecificCourse, getStudentFiles, getStudentResults,
@@ -27,6 +27,7 @@ function ResultsPage(params) {
     const [submitsStudents, setSubmitsStudents] = useState([]);
     const [selectedStudent, setSelectedStudent] = useState(null);
     const [examType, setExamType] = useState('');
+    const [attendance, setAttendance] = useState(null);
 
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);
@@ -47,6 +48,13 @@ function ResultsPage(params) {
 
             const responseSubmits = await getNoOfSubmits(activityID);
             setNoOfSubmits(responseSubmits?.responseJSON?.noOfSubmits);
+
+            const attendance = await getAttendance(activityID);
+            if(attendance?.status === 200) {
+                setAttendance(true);
+            } else {
+                setAttendance(false);
+            }
         })();
     }, []);
 
@@ -78,6 +86,16 @@ function ResultsPage(params) {
         }
     }, [noOfSubmits]);
 
+    useEffect(() => {
+        if(attendance) {
+            if(noOfSubmits === 0) {
+                document.getElementById('noSubmitsAttendance').style.display = 'flex';
+            } else {
+                document.getElementById('submitsAttendance').style.display = 'flex';
+            }
+        }
+    }, [attendance])
+
     const handleClickScreenshots = async () => {
         try {
             await getScreenshots(activityID);
@@ -97,14 +115,9 @@ function ResultsPage(params) {
         }
     };
 
-    const handleClickStudentResults = async () => {
-        try {
-            const overlay = document.querySelector('.overlay');
-            overlay.classList.add('overlay-active');
-
-        } catch(error) {
-            console.log(error);
-        }
+    const handleClickStudentResults = () => {
+        const overlay = document.querySelector('.overlay');
+        overlay.classList.add('overlay-active');
     };
 
     const handleSelectStudent = (username) => {
@@ -121,9 +134,30 @@ function ResultsPage(params) {
           if(examType === 'File') {
               await getStudentFiles(activityID, selectedStudent);
           }
-      }  catch(error) {
+      } catch(error) {
           console.log(error);
       }
+    };
+
+    const handleClickAttendance = () => {
+        const overlay = document.querySelector('.overlay-attendance');
+        overlay.classList.add('overlay-active');
+    };
+
+    const handleAttendancePDF = async () => {
+        try {
+            await getAttendancePDF(activityID);
+        } catch(error) {
+            console.log(error);
+        }
+    };
+
+    const handleAttendanceExcel = async () => {
+        try {
+            await getAttendanceExcel(activityID);
+        } catch(error) {
+            console.log(error);
+        }
     };
 
     return (
@@ -163,6 +197,33 @@ function ResultsPage(params) {
                 </div>
             </div>
 
+            <div className={'overlay-attendance'}></div>
+            <div id={'userModalAttendance'}>
+                <button className={'absolute top-[2%] right-[2%]'}
+                        onClick={() => document.querySelector('.overlay-attendance').classList.remove('overlay-active')}
+                >
+                    <CloseSVG/>
+                </button>
+                <div className={'text-center font-thin text-lg'}>
+                    {RESULTS_PAGE.ATTENDANCE_TYPE}
+                </div>
+
+                <hr className={'mt-2'}/>
+                <div className={'flex mt-8'}>
+                    <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                            onClick={handleAttendancePDF}
+                    >
+                        {RESULTS_PAGE.ATTENDANCE_PDF}
+                    </button>
+
+                    <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                            onClick={handleAttendanceExcel}
+                    >
+                        {RESULTS_PAGE.ATTENDANCE_EXCEL}
+                    </button>
+                </div>
+            </div>
+
             <div className={'page-container'}>
                 <Navbar userName={userName} handleLogoutToken={logoutFunction}/>
 
@@ -194,6 +255,19 @@ function ResultsPage(params) {
                         {noOfSubmits === 0 ? (
                             <div className={'mt-4 text-lg font-light text-center'}>
                                 {RESULTS_PAGE.NO_ANSWERS}
+
+                                <div id={'noSubmitsAttendance'} className={'my-4 flex flex-col hidden'}>
+                                        <span className={'text-[0.931rem]'}>
+                                            {RESULTS_PAGE.ATTENDANCE}
+                                        </span>
+
+                                    <button
+                                        className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                                        onClick={handleClickAttendance}
+                                    >
+                                        {RESULTS_PAGE.DOWNLOAD}
+                                    </button>
+                                </div>
                             </div>
                         ) : (
                             <div className={'my-4'}>
@@ -202,37 +276,53 @@ function ResultsPage(params) {
                                 </span>
 
                                 <div className={'flex justify-around'}>
-                                    <div className={'my-4 flex flex-col'}>
-                                    <span className={'text-[0.931rem]'}>
-                                        {RESULTS_PAGE.ALL_ANSWERS}
-                                    </span>
+                                    <div id={'submitsAttendance'} className={'my-4 flex flex-col hidden'}>
+                                        <span className={'text-[0.931rem]'}>
+                                            {RESULTS_PAGE.ATTENDANCE}
+                                        </span>
 
-                                        <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
-                                                onClick={handleClickSaveAll}
+                                        <button
+                                            className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                                            onClick={handleClickAttendance}
                                         >
                                             {RESULTS_PAGE.DOWNLOAD}
                                         </button>
                                     </div>
 
                                     <div className={'my-4 flex flex-col'}>
-                                    <span className={'text-[0.931rem]'}>
-                                        {RESULTS_PAGE.ALL_PHOTOS}
-                                    </span>
+                                        <span className={'text-[0.931rem]'}>
+                                            {RESULTS_PAGE.ALL_ANSWERS}
+                                        </span>
 
-                                        <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
-                                                onClick={handleClickScreenshots}
-                                                disabled={!(activity?.access?.hub)}
+                                        <button
+                                            className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                                            onClick={handleClickSaveAll}
                                         >
                                             {RESULTS_PAGE.DOWNLOAD}
                                         </button>
                                     </div>
 
                                     <div className={'my-4 flex flex-col'}>
-                                    <span className={'text-[0.931rem]'}>
-                                        {RESULTS_PAGE.DOWNLOAD_STUDENT}
-                                    </span>
+                                        <span className={'text-[0.931rem]'}>
+                                            {RESULTS_PAGE.ALL_PHOTOS}
+                                        </span>
 
-                                        <button className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                                        <button
+                                            className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
+                                            onClick={handleClickScreenshots}
+                                            disabled={!(activity?.access?.hub)}
+                                        >
+                                            {RESULTS_PAGE.DOWNLOAD}
+                                        </button>
+                                    </div>
+
+                                    <div className={'my-4 flex flex-col'}>
+                                        <span className={'text-[0.931rem]'}>
+                                            {RESULTS_PAGE.DOWNLOAD_STUDENT}
+                                        </span>
+
+                                        <button
+                                            className={'w-[10rem] bg-primary px-4 py-2 mt-2 mx-auto text-text-secondary font-light'}
                                             onClick={handleClickStudentResults}
                                         >
                                             {RESULTS_PAGE.DOWNLOAD}
