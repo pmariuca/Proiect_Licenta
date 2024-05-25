@@ -113,6 +113,31 @@ router.post('/addActivity', async (req, res) => {
     }
 });
 
+router.post('/submitAttendance', async (req, res) => {
+    try {
+        const { username, activityID } = req.body;
+
+        const database = clientMongo.db('Activities');
+        const activities = database.collection('Activities');
+
+        await activities.updateOne(
+            { activityID: activityID },
+            { $setOnInsert: { attendance: [] } },
+            { upsert: true }
+        );
+
+
+        await activities.updateOne(
+            { activityID: activityID },
+            { $addToSet: { attendance: username } }
+        );
+
+        return res.status(200);
+    } catch (error) {
+        console.log('There has been an error processing the request: ', error);
+    }
+});
+
 router.get('/getActivityDetails', async (req, res) => {
     try {
         const { activityID } = req.query;

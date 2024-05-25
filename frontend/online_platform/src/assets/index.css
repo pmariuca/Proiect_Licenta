@@ -207,7 +207,8 @@ button:focus-visible {
   opacity: 0;
 }
 
-.overlay {
+.overlay,
+.overlay-attendance {
   display: none;
   position: absolute;
   top: 0;
@@ -220,7 +221,8 @@ button:focus-visible {
   z-index: 11;
 }
 
-#userModal {
+#userModal,
+#userModalAttendance {
   display: none;
   position: absolute;
   top: 20%;
@@ -230,6 +232,10 @@ button:focus-visible {
   background-color: #FFFFFF;
   padding: 1rem;
   z-index: 12;
+}
+
+#userModalAttendance {
+  height: 25%;
 }
 
 .user-row {
@@ -243,7 +249,9 @@ button:focus-visible {
 }
 
 .overlay.overlay-active,
-.overlay.overlay-active + #userModal {
+.overlay.overlay-active + #userModal,
+.overlay-attendance.overlay-active,
+.overlay-attendance.overlay-active + #userModalAttendance {
   display: block;
 }
 

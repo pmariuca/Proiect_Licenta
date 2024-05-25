@@ -5,7 +5,7 @@ import {QUESTION_PAGE} from "../utils/content";
 import {useEffect, useMemo, useState} from "react";
 import {testSlice} from "../store/slices/testSlice";
 import { useLocation, useNavigationType, useNavigate} from "react-router-dom";
-import {getActivityDetials, getSpecificCourse, submitResultsFile} from "../utils/apiCalls";
+import {getActivityDetials, getSpecificCourse, submitAttendance, submitResultsFile} from "../utils/apiCalls";
 import {finishTest} from "../store/thunks/finishTestThunk";
 import ActivityTitle from "../components/ActivityTitle";
 import { io } from 'socket.io-client';
@@ -73,6 +73,10 @@ function QuestionPage(params) {
 
             const response_course = await getSpecificCourse(idCourse);
             setCourseData(response_course?.responseJSON?.data);
+
+            if(currentQuestion === 0) {
+                await submitAttendance(username, activityID);
+            }
         })();
 
         const timer = setInterval(() => {
