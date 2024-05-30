@@ -257,14 +257,21 @@ function QuestionPage(params) {
             <div className={'question-container relative'}>
                 <ActivityTitle activityID={activityID} courseData={courseData} activity={activity} />
 
-                <div className={'course-border p-5'}>
-                    <div className={'flex justify-between items-end'}>
-                        <span className={'text-xl'}>
-                            {QUESTION_PAGE.TITLE + ' ' + (currentQuestion + 1)}
-                        </span>
+                <div className={'p-2 flex min-h-[15.625rem] gap-2'}>
+                    <div className={'w-[7.5rem] h-[6.5rem] p-2 flex flex-col items-baseline course-border gap-2 bg-gray-100'}>
+                        <div>
+                            <span className={'text-xl font-bold'}>
+                                {(currentQuestion + 1)}
+                            </span>
+                            <span className={'text-sm'}>
+                                {QUESTION_PAGE.TITLE}
+                            </span>
+                        </div>
 
                         <div>
-                            {QUESTION_PAGE.TIME_LEFT}{formatTimeLeft()}
+                            <span className={'text-sm'}>
+                                {QUESTION_PAGE.POINTS + 10/noOfQuestions + 'p'}
+                            </span>
                         </div>
                     </div>
 
@@ -272,6 +279,7 @@ function QuestionPage(params) {
                         <ChoiceQuestion questions={questions}
                                         currentQuestion={currentQuestion}
                                         renderQuestions={renderQuestions}
+                                        formatTimeLeft={formatTimeLeft}
                         />
                     }
 

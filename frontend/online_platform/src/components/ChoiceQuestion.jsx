@@ -1,18 +1,26 @@
+import {QUESTION_PAGE} from "../utils/content";
+
 function ChoiceQuestion(params) {
-    const {questions, currentQuestion, renderQuestions} = params;
+    const {questions, currentQuestion, renderQuestions, formatTimeLeft} = params;
 
     return (
-        <div className={'mt-4 pl-4'}>
-        <span>
-            {questions[currentQuestion]?.question?.query}
-        </span>
+        <div className={'p-4 w-full bg-question'}>
+            <div className={'w-full flex justify-between items-center'}>
+                <span>
+                    {questions[currentQuestion]?.question?.query}
+                </span>
 
-        <div>
-            <ul>
-                {renderQuestions}
-            </ul>
+                <div className={'border-2 border-red-700 border-solid p-2'}>
+                    {QUESTION_PAGE.TIME_LEFT}{formatTimeLeft()}
+                </div>
+            </div>
+
+            <div>
+                <ul>
+                    {renderQuestions}
+                </ul>
+            </div>
         </div>
-    </div>
     );
 };
 

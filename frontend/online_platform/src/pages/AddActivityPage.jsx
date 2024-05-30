@@ -375,7 +375,7 @@ function AddActivityPage(params) {
                         <div className={'input-container flex flex-col gap-2'}>
                             <div className={'flex'}>
                                 <label htmlFor={'noOfQuestions'}
-                                       className={'pr-2 block w-[10.375rem]'}
+                                       className={'pr-2 flex items-center w-[10.375rem]'}
                                 >
                                     {ADD_ACTIVITY.QUESTIONS.NUMBER_OF_QUESTIONS}
                                 </label>
@@ -389,7 +389,7 @@ function AddActivityPage(params) {
 
                             <div className={'flex'}>
                                 <label htmlFor={'timeLimit'}
-                                       className={'pr-2 block w-[10.375rem]'}
+                                       className={'pr-2 w-[10.375rem] flex items-center'}
                                 >
                                     {ADD_ACTIVITY.QUESTIONS.TIME_LIMIT}
                                 </label>
