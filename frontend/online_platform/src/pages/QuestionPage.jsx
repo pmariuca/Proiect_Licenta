@@ -55,7 +55,7 @@ function QuestionPage(params) {
 
     useEffect(() => {
         const handleTestStopped = async () => {
-            await submitResults();
+            await submitResultsTestStopped();
         };
 
         socket.on('testStopped', handleTestStopped);
@@ -63,7 +63,7 @@ function QuestionPage(params) {
         return () => {
             socket.off('testStopped', handleTestStopped);
         };
-    }, [answers]);
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -174,6 +174,12 @@ function QuestionPage(params) {
         navigate(`/test/${activityID}/end`);
     };
 
+    const submitResultsTestStopped = async () => {
+        await dispatch(finishTest({username, activityID, answers: [], fraudAttempts: []}));
+        await dispatch(testSlice.actions.setTestActive(false));
+        navigate(`/test/${activityID}/end`);
+    };
+
     const formatTimeLeft = () => {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
@@ -258,7 +264,7 @@ function QuestionPage(params) {
                 <ActivityTitle activityID={activityID} courseData={courseData} activity={activity} />
 
                 <div className={'p-2 flex min-h-[15.625rem] gap-2'}>
-                    <div className={'w-[7.5rem] h-[6.5rem] p-2 flex flex-col items-baseline course-border gap-2 bg-gray-100'}>
+                    <div className={'w-[7.5rem] h-[7.5rem] p-2 flex flex-col items-baseline course-border gap-2 bg-gray-100 basis-[20%]'}>
                         <div>
                             <span className={'text-xl font-bold'}>
                                 {(currentQuestion + 1)}
@@ -287,6 +293,7 @@ function QuestionPage(params) {
                         <FileQuestion questions={questions}
                                       currentQuestion={currentQuestion}
                                       handleSubmit={handleAddedFile}
+                                      formatTimeLeft={formatTimeLeft}
                         />
                     }
 
