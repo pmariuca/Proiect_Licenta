@@ -264,7 +264,7 @@ function QuestionPage(params) {
                 <ActivityTitle activityID={activityID} courseData={courseData} activity={activity} />
 
                 <div className={'p-2 flex min-h-[15.625rem] gap-2'}>
-                    <div className={'w-[7.5rem] h-[7.5rem] p-2 flex flex-col items-baseline course-border gap-2 bg-gray-100 basis-[20%]'}>
+                    <div className={`h-[9.5rem] p-2 flex flex-col items-baseline course-border gap-2 bg-gray-100 ${examType === 'File' ? 'basis-[20%]' : 'basis-[10%]'}`}>
                         <div>
                             <span className={'text-xl font-bold'}>
                                 {(currentQuestion + 1)}
@@ -276,7 +276,13 @@ function QuestionPage(params) {
 
                         <div>
                             <span className={'text-sm'}>
-                                {QUESTION_PAGE.POINTS + 10/noOfQuestions + 'p'}
+                                {QUESTION_PAGE.NO_ANSWER}
+                            </span>
+                        </div>
+
+                        <div>
+                            <span className={'text-sm'}>
+                                {QUESTION_PAGE.POINTS + 10/noOfQuestions + ',00'}
                             </span>
                         </div>
                     </div>
