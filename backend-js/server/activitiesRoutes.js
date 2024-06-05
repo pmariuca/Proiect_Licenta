@@ -157,11 +157,11 @@ router.get('/checkSubmission', async (req, res) => {
    try {
        const { username, activityID } = req.query;
 
-       const database = clientMongo.db('Exams');
-       const exams = database.collection('Exams');
+       const database = clientMongo.db('Activities');
+       const exams = database.collection('Activities');
 
        const submissionExists = await exams.findOne(
-           { activityID: activityID, "submits.username": username }
+           { activityID: activityID, attendance: username }
        );
 
        if (submissionExists !== null) {

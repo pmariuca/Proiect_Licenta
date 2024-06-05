@@ -1,8 +1,8 @@
 import {useCallback, useEffect, useRef, useState} from "react";
-import {FILE_QUESTION} from "../utils/content";
+import {FILE_QUESTION, QUESTION_PAGE} from "../utils/content";
 
 function FileQuestion(params) {
-    const {questions, currentQuestion, handleSubmit} = params;
+    const {questions, currentQuestion, handleSubmit, formatTimeLeft} = params;
     const [dragging, setDragging] = useState(false);
     const fileInputRef = useRef(null);
 
@@ -57,7 +57,13 @@ function FileQuestion(params) {
     };
 
     return (
-        <div className={'mt-4 pl-4'}>
+        <div className={'p-4 bg-question'}>
+            <div className={'flex justify-end pb-2'}>
+                <div className={'border-2 border-red-700 border-solid p-2'}>
+                    {QUESTION_PAGE.TIME_LEFT}{formatTimeLeft()}
+                </div>
+            </div>
+
             <div className={'text-justify'}>
                 {questions[currentQuestion]?.question}
             </div>

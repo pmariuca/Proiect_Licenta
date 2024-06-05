@@ -89,7 +89,11 @@ router.post('/submitResultsFile', upload.array('files'), async (req, res) => {
         const examsDatabase = clientMongo.db('Exams');
         const exams = examsDatabase.collection('Exams');
 
+        const answers = [];
+
         await Promise.all(files.map(file => {
+            answers.push(file.originalname);
+
             const blob = bucket.file(`${activityID}/${username}/${file.originalname}`);
             const blobStream = blob.createWriteStream({
                 metadata: {
@@ -104,7 +108,6 @@ router.post('/submitResultsFile', upload.array('files'), async (req, res) => {
             });
         }));
 
-        const answers = [];
         const submission = { username, answers, fraudAttempts };
         const updateResult = await exams.updateOne(
             { activityID: activityID },

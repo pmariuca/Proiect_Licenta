@@ -131,13 +131,15 @@ export const TEST_PAGE = {
 }
 
 export const QUESTION_PAGE = {
-    TITLE: 'Întrebarea ',
+    TITLE: ' întrebare',
     NEXT: 'Următoarea întrebare',
     SUBMIT: 'Trimite răspunsul',
     TIME_LEFT: 'Timp rămas: ',
     ANSWERS_SAVED: 'Răspunsurile au fost salvate. Puteți să vă întoarceți pe Homepage.',
     HOMEPAGE: 'Homepage',
-    ALERT: 'Încercările de fraudare a testului sunt interzise!'
+    ALERT: 'Încercările de fraudare a testului sunt interzise!',
+    POINTS: 'Marcat din ',
+    NO_ANSWER: 'Nu a primit răspuns încă'
 }
 
 export const RESULTS_PAGE = {

@@ -14,6 +14,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Net.Http;
 using System.Text.Json;
+using System.ComponentModel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace MonitorAppBackend
 {
@@ -378,6 +380,7 @@ namespace MonitorAppBackend
                 var payload = JsonSerializer.Serialize(new { message = "Stop test." });
                 var content = new StringContent(payload, Encoding.UTF8, "application/json");
                 var response = await client.PostAsync("http://localhost:3001/questions/stopTest", content);
+
                 if (response.IsSuccessStatusCode)
                 {
                     Console.WriteLine("Test stopped successfully.");
@@ -393,9 +396,11 @@ namespace MonitorAppBackend
             }
         }
 
-        protected override async void OnFormClosing(FormClosingEventArgs e)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
+
+            Task.Run(async () => await SendDataAsync()).Wait();
 
             if (timer != null)
             {
@@ -405,8 +410,6 @@ namespace MonitorAppBackend
 
             watcher?.Stop();
             watcher?.Dispose();
-
-            await SendDataAsync();
 
             Console.WriteLine("opened processes");
             foreach (string s in openedProcesses)

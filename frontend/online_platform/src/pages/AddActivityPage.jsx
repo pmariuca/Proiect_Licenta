@@ -375,7 +375,7 @@ function AddActivityPage(params) {
                         <div className={'input-container flex flex-col gap-2'}>
                             <div className={'flex'}>
                                 <label htmlFor={'noOfQuestions'}
-                                       className={'pr-2 block w-[10.375rem]'}
+                                       className={'pr-2 flex items-center w-[10.375rem]'}
                                 >
                                     {ADD_ACTIVITY.QUESTIONS.NUMBER_OF_QUESTIONS}
                                 </label>
@@ -389,7 +389,7 @@ function AddActivityPage(params) {
 
                             <div className={'flex'}>
                                 <label htmlFor={'timeLimit'}
-                                       className={'pr-2 block w-[10.375rem]'}
+                                       className={'pr-2 w-[10.375rem] flex items-center'}
                                 >
                                     {ADD_ACTIVITY.QUESTIONS.TIME_LIMIT}
                                 </label>
@@ -403,20 +403,16 @@ function AddActivityPage(params) {
                         </div>
                     </details>
 
+                    <div id={'fillAlert'}
+                         className={'hidden text-[#D20F0F] py-4 px-5 laptop:right-[38%]'}>
+                        {ADD_ACTIVITY.ALERT}
+                    </div>
+
                     <div className={'flex justify-center mt-4'}>
                         <button onClick={handleSubmit}
                                 className={'bg-primary px-4 py-2 text-text-secondary font-light'}
                         >
                             {ADD_ACTIVITY.BUTTON}
-                        </button>
-                    </div>
-
-                    <div id={'fillAlert'} className={'hidden absolute right-[42%] bg-[#D20F0FEB] py-4 px-5 laptop:right-[38%]'}>
-                        {ADD_ACTIVITY.ALERT}
-                        <button className={'absolute top-[5%] right-[2%]'}
-                                onClick={() => document.querySelector('#fillAlert').classList.add('hidden')}
-                        >
-                            <CloseSVG />
                         </button>
                     </div>
                 </div>

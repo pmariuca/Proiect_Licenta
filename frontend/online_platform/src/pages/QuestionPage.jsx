@@ -55,7 +55,7 @@ function QuestionPage(params) {
 
     useEffect(() => {
         const handleTestStopped = async () => {
-            await submitResults();
+            await submitResultsTestStopped();
         };
 
         socket.on('testStopped', handleTestStopped);
@@ -63,7 +63,7 @@ function QuestionPage(params) {
         return () => {
             socket.off('testStopped', handleTestStopped);
         };
-    }, [answers]);
+    }, []);
 
     useEffect(() => {
         (async () => {
@@ -174,6 +174,12 @@ function QuestionPage(params) {
         navigate(`/test/${activityID}/end`);
     };
 
+    const submitResultsTestStopped = async () => {
+        await dispatch(finishTest({username, activityID, answers: [], fraudAttempts: []}));
+        await dispatch(testSlice.actions.setTestActive(false));
+        navigate(`/test/${activityID}/end`);
+    };
+
     const formatTimeLeft = () => {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
@@ -257,14 +263,27 @@ function QuestionPage(params) {
             <div className={'question-container relative'}>
                 <ActivityTitle activityID={activityID} courseData={courseData} activity={activity} />
 
-                <div className={'course-border p-5'}>
-                    <div className={'flex justify-between items-end'}>
-                        <span className={'text-xl'}>
-                            {QUESTION_PAGE.TITLE + ' ' + (currentQuestion + 1)}
-                        </span>
+                <div className={'p-2 flex min-h-[15.625rem] gap-2'}>
+                    <div className={`h-[9.5rem] p-2 flex flex-col items-baseline course-border gap-2 bg-gray-100 ${examType === 'File' ? 'basis-[20%]' : 'basis-[10%]'}`}>
+                        <div>
+                            <span className={'text-xl font-bold'}>
+                                {(currentQuestion + 1)}
+                            </span>
+                            <span className={'text-sm'}>
+                                {QUESTION_PAGE.TITLE}
+                            </span>
+                        </div>
 
                         <div>
-                            {QUESTION_PAGE.TIME_LEFT}{formatTimeLeft()}
+                            <span className={'text-sm'}>
+                                {QUESTION_PAGE.NO_ANSWER}
+                            </span>
+                        </div>
+
+                        <div>
+                            <span className={'text-sm'}>
+                                {QUESTION_PAGE.POINTS + 10/noOfQuestions + ',00'}
+                            </span>
                         </div>
                     </div>
 
@@ -272,6 +291,7 @@ function QuestionPage(params) {
                         <ChoiceQuestion questions={questions}
                                         currentQuestion={currentQuestion}
                                         renderQuestions={renderQuestions}
+                                        formatTimeLeft={formatTimeLeft}
                         />
                     }
 
@@ -279,6 +299,7 @@ function QuestionPage(params) {
                         <FileQuestion questions={questions}
                                       currentQuestion={currentQuestion}
                                       handleSubmit={handleAddedFile}
+                                      formatTimeLeft={formatTimeLeft}
                         />
                     }
 
