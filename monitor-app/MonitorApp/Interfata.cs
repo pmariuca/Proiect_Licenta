@@ -318,18 +318,32 @@ namespace MonitorAppBackend
                 string processPath = $"Win32_Process.Handle='{processId}'";
                 ManagementObject process = new ManagementObject(processPath);
 
-                ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
-                if (outParams != null)
+                try
                 {
-                    string user = (string)outParams["User"];
-                    string domain = (string)outParams["Domain"];
-
-                    if (user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
+                    ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
+                    if (outParams != null)
                     {
-                        if (!openedProcesses.Contains((string)newEvent["Name"]))
+                        string user = (string)outParams["User"];
+                        string domain = (string)outParams["Domain"];
+
+                        if (!string.IsNullOrEmpty(user) && user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
                         {
-                            openedProcesses.Add((string)newEvent["Name"]);
+                            if (!openedProcesses.Contains((string)newEvent["Name"]))
+                            {
+                                openedProcesses.Add((string)newEvent["Name"]);
+                            }
                         }
+                    }
+                }
+                catch (ManagementException ex)
+                {
+                    if (ex.ErrorCode == ManagementStatus.NotFound)
+                    {
+                        Console.WriteLine($"Process with ID {processId} no longer exists.");
+                    }
+                    else
+                    {
+                        throw;
                     }
                 }
             }

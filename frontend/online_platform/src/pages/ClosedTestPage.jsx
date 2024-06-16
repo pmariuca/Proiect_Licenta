@@ -32,7 +32,6 @@ function ClosedTestPage(params) {
             setCourseData(response_course?.responseJSON?.data);
 
             if(response?.responseJSON?.access?.hub === true) {
-                await closeMonitorApp();
                 await analyzeFraud(activityID, username, response?.responseJSON?.answers?.upload);
             }
         })();
