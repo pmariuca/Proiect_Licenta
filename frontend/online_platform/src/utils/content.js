@@ -106,7 +106,7 @@ export const ADD_ACTIVITY = {
     ACCESS: {
         TITLE: 'Restricționare acces',
         FRC: 'Recunoaștere facială',
-        HUBSTAFF: 'Hubstaff'
+        HUBSTAFF: 'Aplicație monitorizare'
     },
     QUESTIONS: {
         TITLE: 'Întrebări',
@@ -128,6 +128,7 @@ export const TEST_PAGE = {
     CHECK_BUTTON: 'Verifică identitatea',
     GDPR_ALERT: 'Trebuie să bifați căsuța GDPR pentru a continua.',
     TRY_AGAIN: 'Mai ai o încercare pentru a efectua recunoașterea facială. Asigură-te că lumina este bună.',
+    WAIT: 'Verificarea are loc. Te rugăm să aștepți!'
 }
 
 export const QUESTION_PAGE = {

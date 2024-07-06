@@ -84,7 +84,7 @@ namespace MonitorAppBackend
                     string title = Buff.ToString();
                     Console.WriteLine($"Window Handle: {hWnd}, Title: {Buff}");
 
-                    if(title.Contains("Edge") || title.Contains("Google"))
+                    if(title.Contains("Edge") || title.Contains("Google") || title.Contains("Discord"))
                     {
                         if(!openedTabs.Contains(title))
                         {
@@ -193,7 +193,7 @@ namespace MonitorAppBackend
 
         private void TakeScreenshot()
         {
-            int interval = int.Parse(monitorRequest.time) < 100 ? int.Parse(monitorRequest.time) / 10 : int.Parse(monitorRequest.time) / 15;
+            int interval = int.Parse(monitorRequest.time) < 100 ? int.Parse(monitorRequest.time) / 20 : int.Parse(monitorRequest.time) / 30;
             int totalSeconds = int.Parse(monitorRequest.time);
             var bucketName = "screenshots-d1cba.appspot.com";
 
@@ -318,19 +318,26 @@ namespace MonitorAppBackend
                 string processPath = $"Win32_Process.Handle='{processId}'";
                 ManagementObject process = new ManagementObject(processPath);
 
-                ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
-                if (outParams != null)
+                try
                 {
-                    string user = (string)outParams["User"];
-                    string domain = (string)outParams["Domain"];
-
-                    if (user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
+                    ManagementBaseObject outParams = process.InvokeMethod("GetOwner", null, null);
+                    if (outParams != null)
                     {
-                        if (!openedProcesses.Contains((string)newEvent["Name"]))
+                        string user = (string)outParams["User"];
+                        string domain = (string)outParams["Domain"];
+
+                        if (user != null && user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
                         {
-                            openedProcesses.Add((string)newEvent["Name"]);
+                            if (!openedProcesses.Contains((string)newEvent["Name"]))
+                            {
+                                openedProcesses.Add((string)newEvent["Name"]);
+                            }
                         }
                     }
+                }
+                catch (Exception innerEx)
+                {
+                    Console.WriteLine($"Eroare la invocarea metodei GetOwner sau la procesarea rezultatelor: {innerEx.Message}");
                 }
             }
         }

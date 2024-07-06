@@ -75,6 +75,8 @@ function Authenticate(params) {
                 setImage(blob);
             }, 'image/jpeg');
         }
+
+        console.log('capturat')
     };
 
 
@@ -83,9 +85,11 @@ function Authenticate(params) {
             document.getElementById('gdpr-alert').classList.remove('hidden');
         } else {
             captureImage();
+            console.log('apasat')
 
             if(image !== null) {
                 (async () => {
+                    document.getElementById('wait-alert').classList.remove('hidden');
                     const response = await checkIdentity(username, image);
 
                     if(response?.responseJSON?.verified === true) {
@@ -103,8 +107,10 @@ function Authenticate(params) {
                     } else {
                         timesChecked++;
                         if(timesChecked === 1 && Number(response?.responseJSON?.distance) <= 0.45) {
+                            document.getElementById('wait-alert').classList.add('hidden');
                             document.getElementById('again-alert').classList.remove('hidden');
                         } else {
+                            document.getElementById('wait-alert').classList.add('hidden');
                             document.getElementById('check-button').disabled = true;
                         }
                     }
@@ -137,6 +143,9 @@ function Authenticate(params) {
                     <div id={'again-alert'} className={'alert-container mt-2 hidden'}>
                         {TEST_PAGE.TRY_AGAIN}
                     </div>
+                    <div id={'wait-alert'} className={'wait-alert-container mt-2 hidden'}>
+                        {TEST_PAGE.WAIT}
+                    </div>
 
                     <div className={'flex justify-center my-8 h-[28.75rem]'}>
                         <video ref={videoRef} autoPlay playsInline width="720" height="460"></video>
@@ -146,8 +155,8 @@ function Authenticate(params) {
 
                     <div className={'flex justify-center items-start'}>
                         <button id={'check-button'}
-                            className={'bg-primary px-4 py-2 text-text-secondary font-light'}
-                            onClick={handleCheckButton}
+                                className={'bg-primary px-4 py-2 text-text-secondary font-light'}
+                                onClick={handleCheckButton}
                         >
                             {TEST_PAGE.CHECK_BUTTON}
                         </button>
