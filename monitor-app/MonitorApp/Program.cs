@@ -101,13 +101,31 @@ namespace MonitorAppBackend
                             {
                                 formToClose.Invoke((MethodInvoker)delegate
                                 {
-                                    formToClose.Close();
+                                    if (!formToClose.IsDisposed)
+                                    {
+                                        formToClose.Close();
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Form is already disposed.");
+                                    }
                                 });
                             }
                             else
                             {
-                                formToClose.Close();
+                                if (!formToClose.IsDisposed)
+                                {
+                                    formToClose.Close();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Form is already disposed.");
+                                }
                             }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Form is null or already disposed.");
                         }
                     });
 

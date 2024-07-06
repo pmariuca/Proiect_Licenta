@@ -5,7 +5,13 @@ import {QUESTION_PAGE} from "../utils/content";
 import {useEffect, useMemo, useState} from "react";
 import {testSlice} from "../store/slices/testSlice";
 import { useLocation, useNavigationType, useNavigate} from "react-router-dom";
-import {getActivityDetials, getSpecificCourse, submitAttendance, submitResultsFile} from "../utils/apiCalls";
+import {
+    closeMonitorApp,
+    getActivityDetials,
+    getSpecificCourse,
+    submitAttendance,
+    submitResultsFile
+} from "../utils/apiCalls";
 import {finishTest} from "../store/thunks/finishTestThunk";
 import ActivityTitle from "../components/ActivityTitle";
 import { io } from 'socket.io-client';
@@ -164,6 +170,13 @@ function QuestionPage(params) {
         if (navigationType === 'POP') {
             dispatch(finishTest({username, activityID, answers: [], fraudAttempts: [copy, paste, cut, exitWindow]}));
             dispatch(testSlice.actions.setTestActive(false));
+
+            (async () => {
+                if (activity?.access?.hub) {
+                    await closeMonitorApp();
+                }
+            })();
+
             navigate(`/test/${activityID}/end`);
         }
     }, [location, navigationType, navigate]);
@@ -171,6 +184,11 @@ function QuestionPage(params) {
     const submitResults = async () => {
         await dispatch(finishTest({username, activityID, answers: [...answers, selectedAnswer], fraudAttempts: [copy, paste, cut, exitWindow]}));
         await dispatch(testSlice.actions.setTestActive(false));
+
+        if(activity?.access?.hub) {
+            await closeMonitorApp();
+        }
+
         navigate(`/test/${activityID}/end`);
     };
 
@@ -186,13 +204,22 @@ function QuestionPage(params) {
         return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
-    const handleClick = () => {
+    const handleClick = async () => {
         dispatch(testSlice.actions.setAnswers(selectedAnswer));
         dispatch(testSlice.actions.setCurrentQuestion(currentQuestion + 1));
 
-        if(currentQuestion + 1 === noOfQuestions) {
-            dispatch(finishTest({ username, activityID, answers: [...answers, selectedAnswer], fraudAttempts: {'copy': copy, 'paste': paste, 'cut': cut, 'exitWindow': exitWindow} }));
+        if (currentQuestion + 1 === noOfQuestions) {
+            dispatch(finishTest({
+                username,
+                activityID,
+                answers: [...answers, selectedAnswer],
+                fraudAttempts: {'copy': copy, 'paste': paste, 'cut': cut, 'exitWindow': exitWindow}
+            }));
             dispatch(testSlice.actions.setTestActive(false));
+
+            if(activity?.access?.hub) {
+                await closeMonitorApp();
+            }
 
             navigate(`/test/${activityID}/end`);
         } else {
@@ -207,8 +234,12 @@ function QuestionPage(params) {
 
             try {
                 await submitResultsFile(username, activityID, files, fraudAttempts);
-
                 dispatch(testSlice.actions.setTestActive(false));
+
+                if(activity?.access?.hub) {
+                    await closeMonitorApp();
+                }
+
                 navigate(`/test/${activityID}/end`);
             } catch (error) {
                 console.error('Error during file submission:', error);
