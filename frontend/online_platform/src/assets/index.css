@@ -51,6 +51,10 @@
     @apply bg-light-red text-[#691911] mx-5 mt-9 py-3 px-5 font-normal text-[0.938rem];
   }
 
+  .wait-alert-container {
+    @apply bg-green-300 text-[#0b4d1e] mx-5 mt-9 py-3 px-5 font-normal text-[0.938rem];
+  }
+
   .navbar {
     @apply max-h-[3.125rem] w-full h-full sticky top-0 right-0 flex items-center justify-between flex-nowrap py-2 px-4 bg-white z-10;
   }

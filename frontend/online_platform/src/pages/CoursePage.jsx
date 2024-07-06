@@ -21,7 +21,7 @@ function CoursePage(params) {
     const [courses, setCourses] = useState({});
 
     const { pathname } = useLocation();
-    const idCourse = pathname.split('/')[2];
+    const idCourse = pathname.split('/')[2].toLowerCase();
 
     const username = useSelector(state => state.global.username);
     const name = useSelector(state => state.global.name);
