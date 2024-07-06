@@ -84,7 +84,7 @@ namespace MonitorAppBackend
                     string title = Buff.ToString();
                     Console.WriteLine($"Window Handle: {hWnd}, Title: {Buff}");
 
-                    if(title.Contains("Edge") || title.Contains("Google"))
+                    if(title.Contains("Edge") || title.Contains("Google") || title.Contains("Discord"))
                     {
                         if(!openedTabs.Contains(title))
                         {
@@ -193,7 +193,7 @@ namespace MonitorAppBackend
 
         private void TakeScreenshot()
         {
-            int interval = int.Parse(monitorRequest.time) < 100 ? int.Parse(monitorRequest.time) / 10 : int.Parse(monitorRequest.time) / 15;
+            int interval = int.Parse(monitorRequest.time) < 100 ? int.Parse(monitorRequest.time) / 20 : int.Parse(monitorRequest.time) / 30;
             int totalSeconds = int.Parse(monitorRequest.time);
             var bucketName = "screenshots-d1cba.appspot.com";
 
@@ -326,7 +326,7 @@ namespace MonitorAppBackend
                         string user = (string)outParams["User"];
                         string domain = (string)outParams["Domain"];
 
-                        if (!string.IsNullOrEmpty(user) && user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
+                        if (user != null && user.Equals("mariu", StringComparison.OrdinalIgnoreCase))
                         {
                             if (!openedProcesses.Contains((string)newEvent["Name"]))
                             {
@@ -335,16 +335,9 @@ namespace MonitorAppBackend
                         }
                     }
                 }
-                catch (ManagementException ex)
+                catch (Exception innerEx)
                 {
-                    if (ex.ErrorCode == ManagementStatus.NotFound)
-                    {
-                        Console.WriteLine($"Process with ID {processId} no longer exists.");
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    Console.WriteLine($"Eroare la invocarea metodei GetOwner sau la procesarea rezultatelor: {innerEx.Message}");
                 }
             }
         }
